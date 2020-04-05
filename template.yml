@@ -4,9 +4,9 @@ Transform: AWS::Serverless-2016-10-31
 
 Parameters:
   ProjectName:
-    Description: project.
+    Description: Project name
     Type: String
-    Default: ItemStore
+    Default: mobilelive
 
 Globals:
   Function:
@@ -61,7 +61,7 @@ Resources:
   LiveStreamLambdaRole:
     Type: 'AWS::IAM::Role'
     Properties:
-      RoleName: !Sub '${ProjectName}-DynamoDbLambda'
+      RoleName: !Sub '${ProjectName}-LiveStreamLambdaRole'
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -131,6 +131,11 @@ Resources:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${LiveStreamArchiveOriginAccessIdentity}
             OriginPath: /vod
         PriceClass: PriceClass_200
+  MediaLiveSecurityGroup:
+    Type: AWS::MediaLive::InputSecurityGroup
+    Properties:
+      WhitelistRules:
+        - Cidr: '0.0.0.0/0'
 
 #   CustomResource:
 #     Type: AWS::Lambda::Function
