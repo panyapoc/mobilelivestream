@@ -76,11 +76,11 @@ def lambda_handler(event, context):
 
 
     # CloudWatch Channel State Change Event Running -> Idle
-    # 1. Update Channel State on DDB ✅
-    # 2. Start moving archive file to new location
-    # 3. Create .m3u8 file from list of .ts file
-    # 4. Add new .m3u8 to DDB for future playing
-    # 5. Update VoD table
+    # 1. Start moving archive file to new location
+    # 2. Create .m3u8 file from list of .ts file
+    # 3. Add new .m3u8 to DDB for future playing
+    # 4. Update VoD table
+    # 5. Update Channel State on DDB ✅
     elif event['detail']['state'] == 'STOPPED' :
         print(f'updating channel {ChannelID} State to STOPPED')
         ddb_channel.update_item(
