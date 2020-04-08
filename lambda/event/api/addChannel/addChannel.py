@@ -15,7 +15,7 @@ mediapackage = boto3.client('mediapackage')
 
 medialive_sg = os.environ['medialive_sg']
 archive_s3 = os.environ['archive_s3']
-medialive_role = os.environ['medialive_role']
+medialive_role_arn = os.environ['medialive_role_arn']
 
 def lambda_handler(event, context):
 
@@ -32,9 +32,13 @@ def lambda_handler(event, context):
 
     input_arn = medialive_create_input['Input']['Arn']
     input_endpoint = medialive_create_input['Input']['Destinations'][0]['Url']
+    input_name = medialive_create_input['Input']['Name']
+    input_id = medialive_create_input['Input']['Id']
 
     print(f'input_arn = {input_arn}')
-    print(f'input_arn = {input_endpoint}')
+    print(f'input_endpoint = {input_endpoint}')
+    print(f'input_name = {input_name}')
+    print(f'input_id = {input_id}')
 
     # 2. Create MediaPackage Channel
     # 3. Create MediaPackage Distrubution
@@ -48,294 +52,230 @@ def lambda_handler(event, context):
 
     # 4. Create new Medialive Channel
 
+    medialive_destination_s3 = str(uuid.uuid4())
+    medialive_destination_mediapackage = str(uuid.uuid4())
+
     medialive_create_channel = medialive.create_channel(
         ChannelClass='SINGLE_PIPELINE',
         Destinations=[{
-            'id': 'akolzu',
-            'settings': [{
-                'url': f's3ssl://{archive_s3}/delivery/{channelid}'
+            'Id': medialive_destination_s3,
+            'Settings': [{
+                'Url': f's3ssl://{archive_s3}/delivery/{channelid}'
             }],
-            'mediaPackageSettings': []
+            'MediaPackageSettings': []
         },
         {
-            'id': 'ipy39t',
-            'settings': [],
-            'mediaPackageSettings': [{
-                'channelId': 'MobilePackage' #TODO getchannelId
+            'Id': medialive_destination_mediapackage,
+            'Settings': [],
+            'MediaPackageSettings': [{
+                'ChannelId': 'MobilePackage' #TODO getchannelId
             }]
-        }
-    ],
+        }],
         EncoderSettings={
-        'audioDescriptions': [{
-                'audioTypeControl': 'FOLLOW_INPUT',
-                'languageCodeControl': 'FOLLOW_INPUT',
-                'name': 'audio_womwb'
-            },
-            {
-                'audioTypeControl': 'FOLLOW_INPUT',
-                'languageCodeControl': 'FOLLOW_INPUT',
-                'name': 'audio_fbphv'
-            }
-        ],
-        'captionDescriptions': [],
-        'outputGroups': [{
-                'outputGroupSettings': {
-                    'archiveGroupSettings': {
-                        'destination': {
-                            'destinationRefId': 'akolzu'
-                        },
-                        'rolloverInterval': 300
-                    }
+            'AudioDescriptions': [{
+                    'AudioTypeControl': 'FOLLOW_INPUT',
+                    'LanguageCodeControl': 'FOLLOW_INPUT',
+                    'Name': 'audio_womwb'
                 },
-                'name': 'Archive',
-                'outputs': [{
-                    'outputSettings': {
-                        'archiveOutputSettings': {
-                            'nameModifier': '_1',
-                            'containerSettings': {
-                                'm2tsSettings': {
-                                    'ccDescriptor': 'DISABLED',
-                                    'ebif': 'NONE',
-                                    'nielsenId3Behavior': 'NO_PASSTHROUGH',
-                                    'programNum': 1,
-                                    'patInterval': 100,
-                                    'pmtInterval': 100,
-                                    'pcrControl': 'PCR_EVERY_PES_PACKET',
-                                    'pcrPeriod': 40,
-                                    'timedMetadataBehavior': 'NO_PASSTHROUGH',
-                                    'bufferModel': 'MULTIPLEX',
-                                    'rateMode': 'CBR',
-                                    'audioBufferModel': 'ATSC',
-                                    'audioStreamType': 'DVB',
-                                    'audioFramesPerPes': 2,
-                                    'segmentationStyle': 'MAINTAIN_CADENCE',
-                                    'segmentationMarkers': 'NONE',
-                                    'ebpPlacement': 'VIDEO_AND_AUDIO_PIDS',
-                                    'ebpAudioInterval': 'VIDEO_INTERVAL',
-                                    'esRateInPes': 'EXCLUDE',
-                                    'arib': 'DISABLED',
-                                    'aribCaptionsPidControl': 'AUTO',
-                                    'absentInputAudioBehavior': 'ENCODE_SILENCE',
-                                    'pmtPid': '480',
-                                    'videoPid': '481',
-                                    'audioPids': '482-498',
-                                    'dvbTeletextPid': '499',
-                                    'dvbSubPids': '460-479',
-                                    'scte27Pids': '450-459',
-                                    'scte35Pid': '500',
-                                    'scte35Control': 'NONE',
-                                    'klv': 'NONE',
-                                    'klvDataPids': '501',
-                                    'timedMetadataPid': '502',
-                                    'etvPlatformPid': '504',
-                                    'etvSignalPid': '505',
-                                    'aribCaptionsPid': '507'
+                {
+                    'AudioTypeControl': 'FOLLOW_INPUT',
+                    'LanguageCodeControl': 'FOLLOW_INPUT',
+                    'Name': 'audio_fbphv'
+                }
+            ],
+            'CaptionDescriptions': [],
+            'OutputGroups': [{
+                    'OutputGroupSettings': {
+                        'ArchiveGroupSettings': {
+                            'Destination': {
+                                'DestinationRefId': medialive_destination_s3
+                            },
+                            'RolloverInterval': 300
+                        }
+                    },
+                    'Name': 'Archive',
+                    'Outputs': [{
+                        'OutputSettings': {
+                            'ArchiveOutputSettings': {
+                                'NameModifier': '_1',
+                                'ContainerSettings': {
+                                    'M2tsSettings': {
+                                        'CcDescriptor': 'DISABLED',
+                                        'Ebif': 'NONE',
+                                        'NielsenId3Behavior': 'NO_PASSTHROUGH',
+                                        'ProgramNum': 1,
+                                        'PatInterval': 100,
+                                        'PmtInterval': 100,
+                                        'PcrControl': 'PCR_EVERY_PES_PACKET',
+                                        'PcrPeriod': 40,
+                                        'TimedMetadataBehavior': 'NO_PASSTHROUGH',
+                                        'BufferModel': 'MULTIPLEX',
+                                        'RateMode': 'CBR',
+                                        'AudioBufferModel': 'ATSC',
+                                        'AudioStreamType': 'DVB',
+                                        'AudioFramesPerPes': 2,
+                                        'SegmentationStyle': 'MAINTAIN_CADENCE',
+                                        'SegmentationMarkers': 'NONE',
+                                        'EbpPlacement': 'VIDEO_AND_AUDIO_PIDS',
+                                        'EbpAudioInterval': 'VIDEO_INTERVAL',
+                                        'EsRateInPes': 'EXCLUDE',
+                                        'Arib': 'DISABLED',
+                                        'AribCaptionsPidControl': 'AUTO',
+                                        'AbsentInputAudioBehavior': 'ENCODE_SILENCE',
+                                        'PmtPid': '480',
+                                        'VideoPid': '481',
+                                        'AudioPids': '482-498',
+                                        'DvbTeletextPid': '499',
+                                        'DvbSubPids': '460-479',
+                                        'Scte27Pids': '450-459',
+                                        'Scte35Pid': '500',
+                                        'Scte35Control': 'NONE',
+                                        'Klv': 'NONE',
+                                        'KlvDataPids': '501',
+                                        'TimedMetadataPid': '502',
+                                        'EtvPlatformPid': '504',
+                                        'EtvSignalPid': '505',
+                                        'AribCaptionsPid': '507'
+                                    }
                                 }
+                            }
+                        },
+                        'OutputName': 'Archive_1',
+                        'VideoDescriptionName': 'video_liuejc',
+                        'AudioDescriptionNames': [
+                            'audio_womwb'
+                        ],
+                        'CaptionDescriptionNames': []
+                    }]
+                },
+                {
+                    'OutputGroupSettings': {
+                        'MediaPackageGroupSettings': {
+                            'Destination': {
+                                'DestinationRefId': medialive_destination_mediapackage
                             }
                         }
                     },
-                    'outputName': 'Archive_1',
-                    'videoDescriptionName': 'video_liuejc',
-                    'audioDescriptionNames': [
-                        'audio_womwb'
-                    ],
-                    'captionDescriptionNames': []
-                }]
+                    'Name': 'MobilePackage',
+                    'Outputs': [{
+                        'OutputSettings': {
+                            'MediaPackageOutputSettings': {}
+                        },
+                        'OutputName': 'MobilePackage_1',
+                        'VideoDescriptionName': 'video_wz2iqp',
+                        'AudioDescriptionNames': [
+                            'audio_fbphv'
+                        ],
+                        'CaptionDescriptionNames': []
+                    }]
+                }
+            ],
+            'TimecodeConfig': {
+                'Source': 'EMBEDDED'
             },
-            {
-                'outputGroupSettings': {
-                    'mediaPackageGroupSettings': {
-                        'destination': {
-                            'destinationRefId': 'ipy39t'
+            'VideoDescriptions': [{
+                    'CodecSettings': {
+                        'H264Settings': {
+                            'AfdSignaling': 'NONE',
+                            'ColorMetadata': 'INSERT',
+                            'AdaptiveQuantization': 'MEDIUM',
+                            'EntropyEncoding': 'CABAC',
+                            'FlickerAq': 'ENABLED',
+                            'FramerateControl': 'INITIALIZE_FROM_SOURCE',
+                            'GopBReference': 'DISABLED',
+                            'GopClosedCadence': 1,
+                            'GopNumBFrames': 2,
+                            'GopSize': 90,
+                            'GopSizeUnits': 'FRAMES',
+                            'SubgopLength': 'FIXED',
+                            'ScanType': 'PROGRESSIVE',
+                            'Level': 'H264_LEVEL_AUTO',
+                            'LookAheadRateControl': 'MEDIUM',
+                            'NumRefFrames': 1,
+                            'ParControl': 'INITIALIZE_FROM_SOURCE',
+                            'Profile': 'MAIN',
+                            'RateControlMode': 'CBR',
+                            'Syntax': 'DEFAULT',
+                            'SceneChangeDetect': 'ENABLED',
+                            'SpatialAq': 'ENABLED',
+                            'TemporalAq': 'ENABLED',
+                            'TimecodeInsertion': 'DISABLED'
                         }
-                    }
-                },
-                'name': 'MobilePackage',
-                'outputs': [{
-                    'outputSettings': {
-                        'mediaPackageOutputSettings': {}
                     },
-                    'outputName': 'MobilePackage_1',
-                    'videoDescriptionName': 'video_wz2iqp',
-                    'audioDescriptionNames': [
-                        'audio_fbphv'
-                    ],
-                    'captionDescriptionNames': []
-                }]
-            }
-        ],
-        'timecodeConfig': {
-            'source': 'EMBEDDED'
+                    'Name': 'video_liuejc',
+                    'RespondToAfd': 'NONE',
+                    'Sharpness': 50,
+                    'ScalingBehavior': 'DEFAULT'
+                },
+                {
+                    'CodecSettings': {
+                        'H264Settings': {
+                            'AfdSignaling': 'NONE',
+                            'ColorMetadata': 'INSERT',
+                            'AdaptiveQuantization': 'MEDIUM',
+                            'Bitrate': 8000000,
+                            'EntropyEncoding': 'CABAC',
+                            'FlickerAq': 'ENABLED',
+                            'FramerateControl': 'SPECIFIED',
+                            'FramerateNumerator': 30,
+                            'FramerateDenominator': 1,
+                            'GopBReference': 'DISABLED',
+                            'GopClosedCadence': 1,
+                            'GopNumBFrames': 2,
+                            'GopSize': 90,
+                            'GopSizeUnits': 'FRAMES',
+                            'SubgopLength': 'FIXED',
+                            'ScanType': 'PROGRESSIVE',
+                            'Level': 'H264_LEVEL_AUTO',
+                            'LookAheadRateControl': 'MEDIUM',
+                            'NumRefFrames': 1,
+                            'ParControl': 'SPECIFIED',
+                            'ParNumerator': 1,
+                            'ParDenominator': 1,
+                            'Profile': 'MAIN',
+                            'RateControlMode': 'CBR',
+                            'Syntax': 'DEFAULT',
+                            'SceneChangeDetect': 'ENABLED',
+                            'SpatialAq': 'ENABLED',
+                            'TemporalAq': 'ENABLED',
+                            'TimecodeInsertion': 'DISABLED'
+                        }
+                    },
+                    'Height': 1080,
+                    'Name': 'video_wz2iqp',
+                    'RespondToAfd': 'NONE',
+                    'Sharpness': 50,
+                    'ScalingBehavior': 'DEFAULT',
+                    'Width': 1920
+                }
+            ]
         },
-        'videoDescriptions': [{
-                'codecSettings': {
-                    'h264Settings': {
-                        'afdSignaling': 'NONE',
-                        'colorMetadata': 'INSERT',
-                        'adaptiveQuantization': 'MEDIUM',
-                        'entropyEncoding': 'CABAC',
-                        'flickerAq': 'ENABLED',
-                        'framerateControl': 'INITIALIZE_FROM_SOURCE',
-                        'gopBReference': 'DISABLED',
-                        'gopClosedCadence': 1,
-                        'gopNumBFrames': 2,
-                        'gopSize': 90,
-                        'gopSizeUnits': 'FRAMES',
-                        'subgopLength': 'FIXED',
-                        'scanType': 'PROGRESSIVE',
-                        'level': 'H264_LEVEL_AUTO',
-                        'lookAheadRateControl': 'MEDIUM',
-                        'numRefFrames': 1,
-                        'parControl': 'INITIALIZE_FROM_SOURCE',
-                        'profile': 'MAIN',
-                        'rateControlMode': 'CBR',
-                        'syntax': 'DEFAULT',
-                        'sceneChangeDetect': 'ENABLED',
-                        'spatialAq': 'ENABLED',
-                        'temporalAq': 'ENABLED',
-                        'timecodeInsertion': 'DISABLED'
-                    }
-                },
-                'name': 'video_liuejc',
-                'respondToAfd': 'NONE',
-                'sharpness': 50,
-                'scalingBehavior': 'DEFAULT'
-            },
-            {
-                'codecSettings': {
-                    'h264Settings': {
-                        'afdSignaling': 'NONE',
-                        'colorMetadata': 'INSERT',
-                        'adaptiveQuantization': 'MEDIUM',
-                        'bitrate': 8000000,
-                        'entropyEncoding': 'CABAC',
-                        'flickerAq': 'ENABLED',
-                        'framerateControl': 'SPECIFIED',
-                        'framerateNumerator': 30,
-                        'framerateDenominator': 1,
-                        'gopBReference': 'DISABLED',
-                        'gopClosedCadence': 1,
-                        'gopNumBFrames': 2,
-                        'gopSize': 90,
-                        'gopSizeUnits': 'FRAMES',
-                        'subgopLength': 'FIXED',
-                        'scanType': 'PROGRESSIVE',
-                        'level': 'H264_LEVEL_AUTO',
-                        'lookAheadRateControl': 'MEDIUM',
-                        'numRefFrames': 1,
-                        'parControl': 'SPECIFIED',
-                        'parNumerator': 1,
-                        'parDenominator': 1,
-                        'profile': 'MAIN',
-                        'rateControlMode': 'CBR',
-                        'syntax': 'DEFAULT',
-                        'sceneChangeDetect': 'ENABLED',
-                        'spatialAq': 'ENABLED',
-                        'temporalAq': 'ENABLED',
-                        'timecodeInsertion': 'DISABLED'
-                    }
-                },
-                'height': 1080,
-                'name': 'video_wz2iqp',
-                'respondToAfd': 'NONE',
-                'sharpness': 50,
-                'scalingBehavior': 'DEFAULT',
-                'width': 1920
-            }
-        ]
-    },
         InputAttachments=[
             {
-                'AutomaticInputFailoverSettings': {
-                    'InputPreference': 'EQUAL_INPUT_PREFERENCE'|'PRIMARY_INPUT_PREFERRED',
-                    'SecondaryInputId': 'string'
-                },
-                'InputAttachmentName': 'string',
-                'InputId': 'string',
+                'InputAttachmentName': input_name,
+                'InputId': input_id,
                 'InputSettings': {
-                    'AudioSelectors': [
-                        {
-                            'Name': 'string',
-                            'SelectorSettings': {
-                                'AudioLanguageSelection': {
-                                    'LanguageCode': 'string',
-                                    'LanguageSelectionPolicy': 'LOOSE'|'STRICT'
-                                },
-                                'AudioPidSelection': {
-                                    'Pid': 123
-                                }
-                            }
-                        },
-                    ],
-                    'CaptionSelectors': [
-                        {
-                            'LanguageCode': 'string',
-                            'Name': 'string',
-                            'SelectorSettings': {
-                                'AribSourceSettings': {}
-                                ,
-                                'DvbSubSourceSettings': {
-                                    'Pid': 123
-                                },
-                                'EmbeddedSourceSettings': {
-                                    'Convert608To708': 'DISABLED'|'UPCONVERT',
-                                    'Scte20Detection': 'AUTO'|'OFF',
-                                    'Source608ChannelNumber': 123,
-                                    'Source608TrackNumber': 123
-                                },
-                                'Scte20SourceSettings': {
-                                    'Convert608To708': 'DISABLED'|'UPCONVERT',
-                                    'Source608ChannelNumber': 123
-                                },
-                                'Scte27SourceSettings': {
-                                    'Pid': 123
-                                },
-                                'TeletextSourceSettings': {
-                                    'PageNumber': 'string'
-                                }
-                            }
-                        },
-                    ],
-                    'DeblockFilter': 'DISABLED'|'ENABLED',
-                    'DenoiseFilter': 'DISABLED'|'ENABLED',
-                    'FilterStrength': 123,
-                    'InputFilter': 'AUTO'|'DISABLED'|'FORCED',
-                    'NetworkInputSettings': {
-                        'HlsInputSettings': {
-                            'Bandwidth': 123,
-                            'BufferSegments': 123,
-                            'Retries': 123,
-                            'RetryInterval': 123
-                        },
-                        'ServerValidation': 'CHECK_CRYPTOGRAPHY_AND_VALIDATE_NAME'|'CHECK_CRYPTOGRAPHY_ONLY'
-                    },
-                    'SourceEndBehavior': 'CONTINUE'|'LOOP',
-                    'VideoSelector': {
-                        'ColorSpace': 'FOLLOW'|'REC_601'|'REC_709',
-                        'ColorSpaceUsage': 'FALLBACK'|'FORCE',
-                        'SelectorSettings': {
-                            'VideoSelectorPid': {
-                                'Pid': 123
-                            },
-                            'VideoSelectorProgramId': {
-                                'ProgramId': 123
-                            }
-                        }
-                    }
+                    'SourceEndBehavior': 'CONTINUE',
+                    'InputFilter': 'AUTO',
+                    'FilterStrength': 1,
+                    'DeblockFilter': 'DISABLED',
+                    'DenoiseFilter': 'DISABLED',
+                    'AudioSelectors': [],
+                    'CaptionSelectors': []
                 }
             },
         ],
         InputSpecification={
-            'codec': 'HEVC',
-            'resolution': 'HD',
-            'maximumBitrate': 'MAX_50_MBPS'
+            'Codec': 'HEVC',
+            'Resolution': 'HD',
+            'MaximumBitrate': 'MAX_50_MBPS'
         },
         LogLevel='DISABLED',
         Name=f'Channel{channelid}',
-        RoleArn=medialive_role,
+        RoleArn=medialive_role_arn,
     )
 
-
+    print(medialive_create_channel)
 
 
     return {
