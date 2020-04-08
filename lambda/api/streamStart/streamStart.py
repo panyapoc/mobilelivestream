@@ -39,8 +39,11 @@ def lambda_handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps(response)
             }
+        Channel['Status'] = 'Starting'
+        ddb_channel.put_item(Item=Channel)
         response = {
             'message' : f'starting Channel {ChannelID}',
+            'ChannelID' : ChannelID,
             'RTMPendpoint' : Channel['RTMPEndpoint']
         }
     else :
