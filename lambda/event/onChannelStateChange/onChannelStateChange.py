@@ -69,7 +69,7 @@ def lambda_handler(event, context):
         print(Message)
         sns_publish = sns.publish(
             TopicArn=os.environ['snstopic'],
-            Message=Message,
+            Message=json.dumps(Message),
             MessageStructure='string',
         )
         return 'ok'
