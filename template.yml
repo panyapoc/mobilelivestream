@@ -268,7 +268,7 @@ Resources:
   FunctionOnChannelStateChange:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Sub '${ProjectName}-OnChannelStateChange'
+      FunctionName: !Sub '${ProjectName}-FunctionOnChannelStateChange'
       Description: OnChannelStateChange
       Handler: onChannelStateChange.lambda_handler
       MemorySize: 128

@@ -56,7 +56,7 @@ def lambda_handler(event, context):
             'VoDEndPoint' : None,
             'Streamer' : None
         }
-        ddb_vod.putItem(Item=VoD)
+        ddb_vod.put_item(Item=VoD)
 
         Channel = ddb_channel.get_item(
             Key={ 'ChannelID': ChannelID }
