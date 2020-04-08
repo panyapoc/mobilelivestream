@@ -14,6 +14,7 @@ import boto3
 import json
 import os
 import uuid
+from datetime import datetime
 
 # BOTO3
 medialive = boto3.client('medialive')
@@ -44,13 +45,16 @@ def lambda_handler(event, context):
             }
         )
 
+        timestamp = datetime.timestamp(datetime.now())
+        print("timestamp =", timestamp)
+
         VoD = {
             'VoDID' : str(uuid.uuid4()),
-            'ChannelId' : '',
-            'StartTime' : '',
-            'EndTime' : '',
-            'VoDEndPoint' : '',
-            'Streamer' : ''
+            'ChannelId' : ChannelID,
+            'StartTime' : timestamp,
+            'EndTime' : None,
+            'VoDEndPoint' : None,
+            'Streamer' : None
         }
         ddb_vod.putItem(Item=VoD)
 

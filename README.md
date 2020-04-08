@@ -56,3 +56,22 @@ logging of livestream is p much VOD table
 - EndTime : END TS
 - VoDEndPoint : HLS Endpoint to view VoD
 - Streamer : [Future USE] who streamed this VoD
+
+Timestamp Usage
+
+``` Python
+from datetime import datetime
+
+# current date and time
+now = datetime.now()
+
+timestamp = datetime.timestamp(now)
+print("timestamp =", timestamp)
+
+
+timestamp = 1545730073
+dt_object = datetime.fromtimestamp(timestamp)
+
+print("dt_object =", dt_object)
+print("type(dt_object) =", type(dt_object))
+```
