@@ -92,7 +92,7 @@ def lambda_handler(event, context):
                 '#keyState' : 'State',
             },
             ExpressionAttributeValues={
-                ':State': 'STOPPED'
+                ':State': 'IDLE'
             }
         )
 
