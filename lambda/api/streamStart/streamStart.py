@@ -2,3 +2,49 @@
 # 1. find idle channel
 # 2. start idle channel
 # 3. return RMTP endpoint
+
+import boto3
+import json
+import os
+
+# BOTO3
+medialive = boto3.client('medialive')
+dynamodb = boto3.resource("dynamodb")
+
+ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
+
+def lambda_handler(event, context):
+    ddb_scan = ddb_channel.scan()
+
+    Channel = {}
+    founded = False
+
+    for Item in ddb_scan['Items'] :
+        if Item['Status'] == 'IDLE' :
+            Channel = Item
+            founded = True
+            break
+
+    if founded :
+        ChannelID = Channel['ChannelID']
+
+        response = medialive.start_channel(
+            ChannelId=ChannelID
+        )
+
+        response = {
+            'message' : f'starting Channel {ChannelID}',
+            'RTMPendpoint' : Channel['Channel']
+        }
+
+    else :
+        response = {
+            'message' : 'no idle channel please wait',
+        }
+
+    return {
+        'statusCode': 200,
+        'body': json.dumps(response)
+    }
+
+

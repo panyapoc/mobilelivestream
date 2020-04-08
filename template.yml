@@ -201,6 +201,26 @@ Resources:
           Properties:
             Path: /Channel
             Method: get
+FunctionListVoD:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-FunctionListVoD'
+      Description: FunctionListVoD
+      Handler: listVoD.lambda_handler
+      MemorySize: 128
+      Runtime: python3.8
+      Role: !GetAtt LiveStreamLambdaRole.Arn
+      Timeout: 300
+      Environment:
+        Variables:
+          ddb_channel : !Ref TableVoD
+      CodeUri: ./lambda/api/listVoD/
+      Events:
+        APIgateway:
+          Type: Api
+          Properties:
+            Path: /VoD
+            Method: get
 
 
 #   CustomResource:
