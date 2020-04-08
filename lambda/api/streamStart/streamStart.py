@@ -27,16 +27,22 @@ def lambda_handler(event, context):
 
     if founded :
         ChannelID = Channel['ChannelID']
-
-        response = medialive.start_channel(
-            ChannelId=ChannelID
-        )
-
+        try:
+            medialive_start_channel = medialive.start_channel(
+                ChannelId=ChannelID
+            )
+        except:
+            response = {
+                'message' : 'cannot start medialive channel',
+            }
+            return {
+                'statusCode': 200,
+                'body': json.dumps(response)
+            }
         response = {
             'message' : f'starting Channel {ChannelID}',
-            'RTMPendpoint' : Channel['Channel']
+            'RTMPendpoint' : Channel['RTMPEndpoint']
         }
-
     else :
         response = {
             'message' : 'no idle channel please wait',
