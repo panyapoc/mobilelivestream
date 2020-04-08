@@ -148,7 +148,7 @@ Resources:
   TableVoD:
     Type: 'AWS::DynamoDB::Table'
     Properties:
-      TableName: !Sub '${ProjectName}-Channel'
+      TableName: !Sub '${ProjectName}-VoD'
       AttributeDefinitions:
         - AttributeName: VoDID
           AttributeType: S
@@ -163,7 +163,7 @@ Resources:
     Properties:
       FunctionName: !Sub '${ProjectName}-FunctionAddChannel'
       Description: GFunctionAddChannel
-      Handler: addChannel.handler
+      Handler: addChannel.lambda_handler
       MemorySize: 128
       Runtime: python3.8
       Role: !GetAtt LiveStreamLambdaRole.Arn

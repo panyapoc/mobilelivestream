@@ -79,7 +79,7 @@ def lambda_handler(event, context):
     )
 
     print(mediapackage_create_origin_endpoint)
-    # HLSendpoint = mediapackage_create_origin_endpoint[]
+    mediapackage_endpoint = mediapackage_create_origin_endpoint['Url']
 
     # 4. Create new Medialive Channel
 
@@ -318,17 +318,22 @@ def lambda_handler(event, context):
         'Streamer' : None,
         'Status' : 'IDLE',
         'RTMPEndpoint' : input_endpoint,
-        'MediaPackageHLSEndpoint' : 'temp',
+        'MediaPackageHLSEndpoint' : mediapackage_endpoint,
     }
 
     ddb_put_item = ddb_channel.put_item(
         Item=ChannelItem
     )
 
+    response = {
+        'message' : 'added new Channel',
+        'channelitem' : ChannelItem
+    }
+
 
     return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda!')
+        'body': json.dumps(ChannelItem)
     }
 
 
