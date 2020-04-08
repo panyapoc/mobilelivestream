@@ -179,7 +179,7 @@ Resources:
         APIgateway:
           Type: Api
           Properties:
-            Path: /addChannel
+            Path: /channel/addChannel
             Method: post
   FunctionListChannel:
     Type: 'AWS::Serverless::Function'
@@ -199,7 +199,7 @@ Resources:
         APIgateway:
           Type: Api
           Properties:
-            Path: /Channel
+            Path: /channel
             Method: get
   FunctionListVoD:
     Type: 'AWS::Serverless::Function'
@@ -219,7 +219,7 @@ Resources:
         APIgateway:
           Type: Api
           Properties:
-            Path: /VoD
+            Path: /vod
             Method: get
   FunctionStreamStart:
     Type: 'AWS::Serverless::Function'
@@ -239,7 +239,27 @@ Resources:
         APIgateway:
           Type: Api
           Properties:
-            Path: /StreamStart
+            Path: /channel/startChannel
+            Method: post
+  FunctionStopStart:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-FunctionStopStart'
+      Description: FunctionStopStart
+      Handler: streamStop.lambda_handler
+      MemorySize: 128
+      Runtime: python3.8
+      Role: !GetAtt LiveStreamLambdaRole.Arn
+      Timeout: 300
+      Environment:
+        Variables:
+          ddb_channel : !Ref TableChannel
+      CodeUri: ./lambda/api/streamStop/
+      Events:
+        APIgateway:
+          Type: Api
+          Properties:
+            Path: /channel/stopChannel
             Method: post
 
 

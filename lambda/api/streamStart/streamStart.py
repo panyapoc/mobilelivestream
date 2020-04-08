@@ -39,7 +39,7 @@ def lambda_handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps(response)
             }
-        Channel['Status'] = 'Starting'
+        Channel['Status'] = medialive_start_channel['State']
         ddb_channel.put_item(Item=Channel)
         response = {
             'message' : f'starting Channel {ChannelID}',
