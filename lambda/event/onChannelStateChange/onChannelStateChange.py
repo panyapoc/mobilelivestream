@@ -51,7 +51,7 @@ def lambda_handler(event, context):
         VoD = {
             'VoDID' : str(uuid.uuid4()),
             'ChannelId' : ChannelID,
-            'StartTime' : timestamp,
+            'StartTime' : str(timestamp),
             'EndTime' : None,
             'VoDEndPoint' : None,
             'Streamer' : None
