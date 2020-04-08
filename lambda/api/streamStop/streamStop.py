@@ -13,7 +13,7 @@ dynamodb = boto3.resource("dynamodb")
 ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 
 def lambda_handler(event, context):
-    ChannelID = event['body'].get('ChannelID',False) # ChannelID or False
+    ChannelID = json.loads(event['body']).get('ChannelID',False) # ChannelID or False
     if ChannelID:
         try:
             medialive_stop_channel = medialive.stop_channel(
@@ -23,7 +23,7 @@ def lambda_handler(event, context):
             response = {
                 'message' : f'cannot stop medialive channel {ChannelID}',
             }
-        ddb_channel.update(
+        ddb_channel.update_item(
             Key={
                 'ChannelID': ChannelID
             },
