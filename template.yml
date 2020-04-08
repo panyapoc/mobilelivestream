@@ -35,30 +35,25 @@ Resources:
                 - sts:AssumeRole
         ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AdministratorAccess'
-        # Policies:
-        #   -
-        #     PolicyName: !Sub "${AWS::StackName}-mediatranscode-role"
-        #     PolicyDocument:
-        #       Statement:
-        #         -
-        #           Effect: Allow
-        #           Action:
-        #             - ssm:DescribeParameters
-        #             - ssm:GetParameter
-        #             - ssm:GetParameters
-        #             - ssm:PutParameter
-        #           Resource:
-        #             - !Join ["", ["arn:aws:ssm:", Ref: "AWS::Region", ":", Ref: "AWS::AccountId", ":parameter/*"]]
-        #         # feature/P20903447 MediaConnect support
-        #         -
-        #           Effect: Allow
-        #           Action:
-        #             - mediaconnect:ManagedDescribeFlow
-        #             - mediaconnect:ManagedAddOutput
-        #             - mediaconnect:ManagedRemoveOutput
-        #           Resource:
-        #             - !Join ["", ["arn:aws:mediaconnect:", Ref: "AWS::Region", ":", Ref: "AWS::AccountId", ":*"]]
 
+  MediaPackageRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            -
+              Effect: Allow
+              Principal:
+                Service:
+                  - "mediapackage.amazonaws.com"
+              Action:
+                - sts:AssumeRole
+        ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/AdministratorAccess'
+        # Policies:
+        # CdnIdentifierSecret (string) -- [REQUIRED] The Amazon Resource Name (ARN) for the secret in Secrets Manager that your Content Distribution Network (CDN) uses for authorization to access your endpoint.
+        # SecretsRoleArn (string) -- [REQUIRED] The Amazon Resource Name (ARN) for the IAM role that allows MediaPackage to communicate with AWS Secrets Manager.
   # TODO: SCOPE ROLE
   LiveStreamLambdaRole:
     Type: 'AWS::IAM::Role'
@@ -78,8 +73,8 @@ Resources:
 
   LiveStreamArchiveBucket:
     Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub '${ProjectName}-livestream-archive'
+    # Properties:
+    #   BucketName: !Sub '${ProjectName}-livestream-archive'
 
   LiveStreamArchiveOriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
@@ -145,7 +140,7 @@ Resources:
     Properties:
       FunctionName: !Sub '${ProjectName}-FunctionAddChannel'
       Description: GFunctionAddChannel
-      Handler: main.handler
+      Handler: addChannel.handler
       MemorySize: 128
       Runtime: python3.8
       Role: !GetAtt LiveStreamLambdaRole.Arn
@@ -154,7 +149,7 @@ Resources:
         Variables:
           medialive_sg: !Ref MediaLiveSecurityGroup #medialive_sg id
           archive_s3 : !Ref LiveStreamArchiveBucket #archive_s3 bucketname
-          medialive_role_arn : !GetAtt .Arn #medialive_role_arn role arn
+          medialive_role_arn : !GetAtt MediaLiveRole.Arn #medialive_role_arn role arn
       CodeUri: ./lambda/api/addChannel/
       Events:
         APIgateway:

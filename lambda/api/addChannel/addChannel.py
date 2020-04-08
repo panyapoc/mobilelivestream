@@ -41,14 +41,38 @@ def lambda_handler(event, context):
     print(f'input_id = {input_id}')
 
     # 2. Create MediaPackage Channel
-    # 3. Create MediaPackage Distrubution
 
-    # mediapackage_create_channel = mediapackage.create_channel(
-    #     Description=f'mediapackage channel {channelid}',
-    #     Id=channelid,
-    # )
+    mediapackage_create_channel = mediapackage.create_channel(
+        Description=f'mediapackage channel {channelid}',
+        Id=channelid,
+    )
 
     # print(mediapackage_create_channel)
+    mediapackage_channelid = channelid
+
+    # 3. Create MediaPackage Distrubution
+    mediapackage_create_channel = mediapackage.create_origin_endpoint(
+        # Authorization={
+        #     'CdnIdentifierSecret': 'string',
+        #     'SecretsRoleArn': 'string'
+        # },
+        ChannelId=channelid,
+        Description=f'mediapackage HLS distibution endpoint channel {channelid}',
+        HlsPackage={
+            'AdMarkers': 'NONE',
+            'IncludeIframeOnlyStream': False,
+            'PlaylistType': 'EVENT',
+            'PlaylistWindowSeconds': 60,
+            'SegmentDurationSeconds': 6,
+            'StreamSelection': {
+                'StreamOrder': 'ORIGINAL'
+            }
+        },
+        Id=channelid,
+        Origination='ALLOW',
+        StartoverWindowSeconds=300,
+        TimeDelaySeconds=0
+    )
 
     # 4. Create new Medialive Channel
 
@@ -68,19 +92,21 @@ def lambda_handler(event, context):
             'Id': medialive_destination_mediapackage,
             'Settings': [],
             'MediaPackageSettings': [{
-                'ChannelId': 'MobilePackage' #TODO getchannelId
+                'ChannelId': channelid
             }]
         }],
         EncoderSettings={
             'AudioDescriptions': [{
                     'AudioTypeControl': 'FOLLOW_INPUT',
                     'LanguageCodeControl': 'FOLLOW_INPUT',
-                    'Name': 'audio_womwb'
+                    'AudioSelectorName' : 'audio_1',
+                    'Name': 'audio_1'
                 },
                 {
                     'AudioTypeControl': 'FOLLOW_INPUT',
                     'LanguageCodeControl': 'FOLLOW_INPUT',
-                    'Name': 'audio_fbphv'
+                    'AudioSelectorName' : 'audio_2',
+                    'Name': 'audio_2'
                 }
             ],
             'CaptionDescriptions': [],
@@ -143,7 +169,7 @@ def lambda_handler(event, context):
                         'OutputName': 'Archive_1',
                         'VideoDescriptionName': 'video_liuejc',
                         'AudioDescriptionNames': [
-                            'audio_womwb'
+                            'audio_1'
                         ],
                         'CaptionDescriptionNames': []
                     }]
@@ -164,7 +190,7 @@ def lambda_handler(event, context):
                         'OutputName': 'MobilePackage_1',
                         'VideoDescriptionName': 'video_wz2iqp',
                         'AudioDescriptionNames': [
-                            'audio_fbphv'
+                            'audio_2'
                         ],
                         'CaptionDescriptionNames': []
                     }]
