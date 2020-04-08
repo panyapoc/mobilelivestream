@@ -10,23 +10,29 @@ import json
 import uuid
 import os
 
+# BOTO3
 medialive = boto3.client('medialive')
 mediapackage = boto3.client('mediapackage')
+dynamodb = boto3.resource("dynamodb")
 
+# ENV VAR
 medialive_sg = os.environ['medialive_sg']
 archive_s3 = os.environ['archive_s3']
 medialive_role_arn = os.environ['medialive_role_arn']
+ddb_channel_tablename = os.environ['ddb_channel']
+
+ddb_channel = dynamodb.Table(ddb_channel_tablename)
 
 def lambda_handler(event, context):
 
-    channelid = str(uuid.uuid1())
-    print(f'channeli is {channelid}')
+    channeluuid = str(uuid.uuid1())
+    print(f'channeli is {channeluuid}')
 
     # 1. Create new Medialive Input
     medialive_create_input = medialive.create_input(
-        Destinations=[{'StreamName': f'input{channelid}'},],
+        Destinations=[{'StreamName': f'input{channeluuid}'},],
         InputSecurityGroups=[ medialive_sg ],
-        Name=f'input{channelid}',
+        Name=f'input{channeluuid}',
         Type='RTMP_PUSH'
     )
 
@@ -43,21 +49,19 @@ def lambda_handler(event, context):
     # 2. Create MediaPackage Channel
 
     mediapackage_create_channel = mediapackage.create_channel(
-        Description=f'mediapackage channel {channelid}',
-        Id=channelid,
+        Description=f'mediapackage channel {channeluuid}',
+        Id=channeluuid,
     )
-
-    # print(mediapackage_create_channel)
-    mediapackage_channelid = channelid
+    mediapackage_channeluuid = channeluuid
 
     # 3. Create MediaPackage Distrubution
-    mediapackage_create_channel = mediapackage.create_origin_endpoint(
+    mediapackage_create_origin_endpoint = mediapackage.create_origin_endpoint(
         # Authorization={
         #     'CdnIdentifierSecret': 'string',
         #     'SecretsRoleArn': 'string'
         # },
-        ChannelId=channelid,
-        Description=f'mediapackage HLS distibution endpoint channel {channelid}',
+        ChannelId=channeluuid,
+        Description=f'mediapackage HLS distibution endpoint channel {channeluuid}',
         HlsPackage={
             'AdMarkers': 'NONE',
             'IncludeIframeOnlyStream': False,
@@ -68,11 +72,14 @@ def lambda_handler(event, context):
                 'StreamOrder': 'ORIGINAL'
             }
         },
-        Id=channelid,
+        Id=channeluuid,
         Origination='ALLOW',
         StartoverWindowSeconds=300,
         TimeDelaySeconds=0
     )
+
+    print(mediapackage_create_origin_endpoint)
+    # HLSendpoint = mediapackage_create_origin_endpoint[]
 
     # 4. Create new Medialive Channel
 
@@ -84,7 +91,7 @@ def lambda_handler(event, context):
         Destinations=[{
             'Id': medialive_destination_s3,
             'Settings': [{
-                'Url': f's3ssl://{archive_s3}/delivery/{channelid}'
+                'Url': f's3ssl://{archive_s3}/delivery/{channeluuid}'
             }],
             'MediaPackageSettings': []
         },
@@ -92,7 +99,7 @@ def lambda_handler(event, context):
             'Id': medialive_destination_mediapackage,
             'Settings': [],
             'MediaPackageSettings': [{
-                'ChannelId': channelid
+                'ChannelId': channeluuid
             }]
         }],
         EncoderSettings={
@@ -297,15 +304,26 @@ def lambda_handler(event, context):
             'MaximumBitrate': 'MAX_50_MBPS'
         },
         LogLevel='DISABLED',
-        Name=f'Channel-{channelid}',
+        Name=f'Channel-{channeluuid}',
         RoleArn=medialive_role_arn,
     )
 
-    print(medialive_create_channel)
+    # print(medialive_create_channel)
+    ChannelId = medialive_create_channel['Channel']['Id']
 
-    #TODO
-    # ERROR handling / Retry
-    # Channel Metadata to DDB
+    #TODO ERROR handling / Retry
+
+    ChannelItem = {
+        'ChannelID' : ChannelId,
+        'Streamer' : None,
+        'Status' : 'IDLE',
+        'RTMPEndpoint' : input_endpoint,
+        'MediaPackageHLSEndpoint' : 'temp',
+    }
+
+    ddb_put_item = ddb_channel.put_item(
+        Item=ChannelItem
+    )
 
 
     return {

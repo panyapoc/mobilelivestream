@@ -82,7 +82,6 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: !Sub "web-access-${LiveStreamArchiveBucket}"
-
   LiveStreamArchiveBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -95,7 +94,6 @@ Resources:
             Resource: !Join ['',['arn:aws:s3:::',!Ref LiveStreamArchiveBucket,'/*']]
             Principal:
               CanonicalUser: !GetAtt LiveStreamArchiveOriginAccessIdentity.S3CanonicalUserId
-
   WebCDN:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -135,6 +133,30 @@ Resources:
       WhitelistRules:
         - Cidr: '0.0.0.0/0'
 
+# ---------- DYNAMODB TABLES DEFINITIONS ---------
+  TableChannel:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: !Sub '${ProjectName}-Channel'
+      AttributeDefinitions:
+        - AttributeName: ChannelID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: ChannelID
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+  TableVoD:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      TableName: !Sub '${ProjectName}-Channel'
+      AttributeDefinitions:
+        - AttributeName: VoDID
+          AttributeType: S
+      KeySchema:
+        - AttributeName: VoDID
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
 # ---------- Lambda Function ---------
   FunctionAddChannel:
     Type: 'AWS::Serverless::Function'
@@ -151,6 +173,7 @@ Resources:
           medialive_sg: !Ref MediaLiveSecurityGroup #medialive_sg id
           archive_s3 : !Ref LiveStreamArchiveBucket #archive_s3 bucketname
           medialive_role_arn : !GetAtt MediaLiveRole.Arn #medialive_role_arn role arn
+          ddb_channel : !Ref TableChannel
       CodeUri: ./lambda/api/addChannel/
       Events:
         APIgateway:
@@ -158,6 +181,7 @@ Resources:
           Properties:
             Path: /addChannel
             Method: post
+
 
 #   CustomResource:
 #     Type: AWS::Lambda::Function
