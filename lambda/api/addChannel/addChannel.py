@@ -303,6 +303,10 @@ def lambda_handler(event, context):
 
     print(medialive_create_channel)
 
+    #TODO
+    # ERROR handling / Retry
+    # Channel Metadata to DDB
+
 
     return {
         'statusCode': 200,
