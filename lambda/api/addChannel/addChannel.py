@@ -90,7 +90,7 @@ def lambda_handler(event, context):
         Destinations=[{
             'Id': medialive_destination_s3,
             'Settings': [{
-                'Url': f's3ssl://{archive_s3}/delivery/{channeluuid}'
+                'Url': f's3ssl://{archive_s3}/delivery/{channeluuid}/'
             }],
             'MediaPackageSettings': []
         },
@@ -318,6 +318,7 @@ def lambda_handler(event, context):
         'State' : 'IDLE',
         'RTMPEndpoint' : input_endpoint,
         'MediaPackageHLSEndpoint' : mediapackage_endpoint,
+        'VoDS3key' : 'channeluuid'
     }
 
     ddb_put_item = ddb_channel.put_item(
