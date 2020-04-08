@@ -279,7 +279,7 @@ Resources:
         Variables:
           ddb_channel : !Ref TableChannel
           ddb_vod : !Ref TableVoD
-          snstopic : !GetAtt ChannelReadySNS.TopicName
+          snstopic : !Ref ChannelReadySNS
       CodeUri: ./lambda/event/onChannelStateChange/
       Events:
         CWEvent:
