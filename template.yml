@@ -36,24 +36,25 @@ Resources:
         ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/AdministratorAccess'
 
-  MediaPackageRole:
-      Type: AWS::IAM::Role
-      Properties:
-        AssumeRolePolicyDocument:
-          Version: 2012-10-17
-          Statement:
-            -
-              Effect: Allow
-              Principal:
-                Service:
-                  - "mediapackage.amazonaws.com"
-              Action:
-                - sts:AssumeRole
-        ManagedPolicyArns:
-        - 'arn:aws:iam::aws:policy/AdministratorAccess'
-        # Policies:
-        # CdnIdentifierSecret (string) -- [REQUIRED] The Amazon Resource Name (ARN) for the secret in Secrets Manager that your Content Distribution Network (CDN) uses for authorization to access your endpoint.
-        # SecretsRoleArn (string) -- [REQUIRED] The Amazon Resource Name (ARN) for the IAM role that allows MediaPackage to communicate with AWS Secrets Manager.
+  # Not needed
+  # MediaPackageRole:
+  #     Type: AWS::IAM::Role
+  #     Properties:
+  #       AssumeRolePolicyDocument:
+  #         Version: 2012-10-17
+  #         Statement:
+  #           -
+  #             Effect: Allow
+  #             Principal:
+  #               Service:
+  #                 - "mediapackage.amazonaws.com"
+  #             Action:
+  #               - sts:AssumeRole
+  #       ManagedPolicyArns:
+  #       - 'arn:aws:iam::aws:policy/AdministratorAccess'
+  #       # Policies:
+  #       # CdnIdentifierSecret (string) -- [REQUIRED] The Amazon Resource Name (ARN) for the secret in Secrets Manager that your Content Distribution Network (CDN) uses for authorization to access your endpoint.
+  #       # SecretsRoleArn (string) -- [REQUIRED] The Amazon Resource Name (ARN) for the IAM role that allows MediaPackage to communicate with AWS Secrets Manager.
   # TODO: SCOPE ROLE
   LiveStreamLambdaRole:
     Type: 'AWS::IAM::Role'

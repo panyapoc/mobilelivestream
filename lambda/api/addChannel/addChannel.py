@@ -297,7 +297,7 @@ def lambda_handler(event, context):
             'MaximumBitrate': 'MAX_50_MBPS'
         },
         LogLevel='DISABLED',
-        Name=f'Channel{channelid}',
+        Name=f'Channel-{channelid}',
         RoleArn=medialive_role_arn,
     )
 
