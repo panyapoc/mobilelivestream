@@ -201,7 +201,7 @@ Resources:
           Properties:
             Path: /Channel
             Method: get
-FunctionListVoD:
+  FunctionListVoD:
     Type: 'AWS::Serverless::Function'
     Properties:
       FunctionName: !Sub '${ProjectName}-FunctionListVoD'
@@ -221,6 +221,27 @@ FunctionListVoD:
           Properties:
             Path: /VoD
             Method: get
+  FunctionStreamStart:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-FunctionStreamStart'
+      Description: FunctionStreamStart
+      Handler: streamStart.lambda_handler
+      MemorySize: 128
+      Runtime: python3.8
+      Role: !GetAtt LiveStreamLambdaRole.Arn
+      Timeout: 300
+      Environment:
+        Variables:
+          ddb_channel : !Ref TableChannel
+      CodeUri: ./lambda/api/streamStart/
+      Events:
+        APIgateway:
+          Type: Api
+          Properties:
+            Path: /StreamStart
+            Method: post
+
 
 
 #   CustomResource:
