@@ -1,5 +1,5 @@
 # API - null
-# list Channel: Status, Viewing Endpoint
+# list Channel: State, Viewing Endpoint
 
 import json
 import os

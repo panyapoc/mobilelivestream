@@ -42,7 +42,7 @@ sam deploy \
 
 - ChannelId
 - Streamer : [Future USE] who currenty Streaming
-- Status : IDLE | IN_USE | IN_PROGESS
+- State : IDLE | IN_USE | IN_PROGESS
 - RTMPEndpoint : RMTP input Endpoint for mobile to stream to this channel
 - MediaPackageHLSEndpoint : HLS Endpoint to view livestream
 

@@ -315,7 +315,7 @@ def lambda_handler(event, context):
     ChannelItem = {
         'ChannelID' : ChannelId,
         'Streamer' : None,
-        'Status' : 'IDLE',
+        'State' : 'IDLE',
         'RTMPEndpoint' : input_endpoint,
         'MediaPackageHLSEndpoint' : mediapackage_endpoint,
     }

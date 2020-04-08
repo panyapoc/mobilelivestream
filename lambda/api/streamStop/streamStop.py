@@ -21,14 +21,20 @@ def lambda_handler(event, context):
             )
         except:
             response = {
-                'message' : f'cannot stop medialive channel {ChannelID}',
+                'message' : f'cannot stop medialive channel {ChannelID}'
             }
+
+        print(medialive_stop_channel['State'])
+
         ddb_channel.update_item(
             Key={
                 'ChannelID': ChannelID
             },
-            UpdateExpression='set Status = :State',
+            UpdateExpression='set #keyState = :State',
             ExpressionAttributeNames={
+                '#keyState' : 'State',
+            },
+            ExpressionAttributeValues={
                 ':State': medialive_stop_channel['State']
             }
         )
@@ -47,7 +53,3 @@ def lambda_handler(event, context):
             'statusCode': 200,
             'body': json.dumps(response)
         }
-
-
-
-

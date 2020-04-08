@@ -20,7 +20,7 @@ def lambda_handler(event, context):
     founded = False
 
     for Item in ddb_scan['Items'] :
-        if Item['Status'] == 'IDLE' :
+        if Item['State'] == 'IDLE' :
             Channel = Item
             founded = True
             break
@@ -39,7 +39,7 @@ def lambda_handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps(response)
             }
-        Channel['Status'] = medialive_start_channel['State']
+        Channel['State'] = medialive_start_channel['State']
         ddb_channel.put_item(Item=Channel)
         response = {
             'message' : f'starting Channel {ChannelID}',
