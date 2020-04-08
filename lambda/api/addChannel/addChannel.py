@@ -19,9 +19,8 @@ dynamodb = boto3.resource("dynamodb")
 medialive_sg = os.environ['medialive_sg']
 archive_s3 = os.environ['archive_s3']
 medialive_role_arn = os.environ['medialive_role_arn']
-ddb_channel_tablename = os.environ['ddb_channel']
 
-ddb_channel = dynamodb.Table(ddb_channel_tablename)
+ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 
 def lambda_handler(event, context):
 

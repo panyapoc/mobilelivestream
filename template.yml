@@ -181,6 +181,26 @@ Resources:
           Properties:
             Path: /addChannel
             Method: post
+  FunctionListChannel:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      FunctionName: !Sub '${ProjectName}-FunctionListChannel'
+      Description: FunctionListChannel
+      Handler: listChannel.lambda_handler
+      MemorySize: 128
+      Runtime: python3.8
+      Role: !GetAtt LiveStreamLambdaRole.Arn
+      Timeout: 300
+      Environment:
+        Variables:
+          ddb_channel : !Ref TableChannel
+      CodeUri: ./lambda/api/listChannel/
+      Events:
+        APIgateway:
+          Type: Api
+          Properties:
+            Path: /Channel
+            Method: get
 
 
 #   CustomResource:
