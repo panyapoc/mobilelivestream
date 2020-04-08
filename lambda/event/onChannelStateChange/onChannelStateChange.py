@@ -53,7 +53,7 @@ def lambda_handler(event, context):
             'ChannelId' : ChannelID,
             'StartTime' : str(timestamp),
             'EndTime' : None,
-            'VoDEndPoint' : None,
+            'VoDEndpoint' : None,
             'Streamer' : None
         }
         ddb_vod.put_item(Item=VoD)

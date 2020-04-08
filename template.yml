@@ -321,32 +321,32 @@ Resources:
 #     Type: Custom::MediaPackageHlsEndpoint
 #     Properties:
 #       ServiceToken: !GetAtt CustomResource.Arn
-#       Resource: MediaPackageEndPoint
-#       EndPoint: HLS
+#       Resource: MediaPackageEndpoint
+#       Endpoint: HLS
 #       ChannelId: !GetAtt MediaPackageChannel.ChannelId
 
 #   # MediaPackageDashEndpoint:
 #   #   Type: Custom::MediaPackageDashEndpoint
 #   #   Properties:
 #   #     ServiceToken: !GetAtt CustomResource.Arn
-#   #     Resource: MediaPackageEndPoint
-#   #     EndPoint: DASH
+#   #     Resource: MediaPackageEndpoint
+#   #     Endpoint: DASH
 #   #     ChannelId: !GetAtt MediaPackageChannel.ChannelId
 
 #   # MediaPackageMssEndpoint:
 #   #   Type: Custom::MediaPackageMssEndpoint
 #   #   Properties:
 #   #     ServiceToken: !GetAtt CustomResource.Arn
-#   #     Resource: MediaPackageEndPoint
-#   #     EndPoint: MSS
+#   #     Resource: MediaPackageEndpoint
+#   #     Endpoint: MSS
 #   #     ChannelId: !GetAtt MediaPackageChannel.ChannelId
 
 #   # MediaPackageCmafEndpoint:
 #   #   Type: Custom::MediaPackageCmafEndpoint
 #   #   Properties:
 #   #     ServiceToken: !GetAtt CustomResource.Arn
-#   #     Resource: MediaPackageEndPoint
-#   #     EndPoint: CMAF
+#   #     Resource: MediaPackageEndpoint
+#   #     Endpoint: CMAF
 #   #     ChannelId: !GetAtt MediaPackageChannel.ChannelId
 
 #   MediaLiveInput:

@@ -54,7 +54,7 @@ logging of livestream is p much VOD table
 - ChannelId : Create From which chaneel
 - StartTime : Start TS
 - EndTime : END TS
-- VoDEndPoint : HLS Endpoint to view VoD
+- VoDEndpoint : HLS Endpoint to view VoD
 - Streamer : [Future USE] who streamed this VoD
 
 Timestamp Usage
