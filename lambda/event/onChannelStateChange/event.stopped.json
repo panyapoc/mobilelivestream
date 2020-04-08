@@ -1,0 +1,19 @@
+{
+    "version": "0",
+    "id": "28928633-eda9-aec8-2d4b-331b6aa9143f",
+    "detail-type": "MediaLive Channel State Change",
+    "source": "aws.medialive",
+    "account": "962222257213",
+    "time": "2020-04-08T13:16:18Z",
+    "region": "ap-southeast-1",
+    "resources": [
+        "arn:aws:medialive:ap-southeast-1:962222257213:channel:6143654"
+    ],
+    "detail": {
+        "pipelines_running_count": 0,
+        "state": "STOPPED",
+        "pipeline": "0",
+        "channel_arn": "arn:aws:medialive:ap-southeast-1:962222257213:channel:6143654",
+        "message": "Stop detected on pipeline"
+    }
+}

@@ -241,11 +241,11 @@ Resources:
           Properties:
             Path: /channel/startChannel
             Method: post
-  FunctionStopStart:
+  FunctionStreamStop:
     Type: 'AWS::Serverless::Function'
     Properties:
-      FunctionName: !Sub '${ProjectName}-FunctionStopStart'
-      Description: FunctionStopStart
+      FunctionName: !Sub '${ProjectName}-FunctionStreamStop'
+      Description: FunctionStreamStop
       Handler: streamStop.lambda_handler
       MemorySize: 128
       Runtime: python3.8

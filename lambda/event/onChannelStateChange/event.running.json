@@ -1,0 +1,19 @@
+{
+    "version": "0",
+    "id": "2f2a5af9-79ad-fc03-d7a5-9d7c57f43a66",
+    "detail-type": "MediaLive Channel State Change",
+    "source": "aws.medialive",
+    "account": "962222257213",
+    "time": "2020-04-08T12:47:02Z",
+    "region": "ap-southeast-1",
+    "resources": [
+        "arn:aws:medialive:ap-southeast-1:962222257213:channel:6143654"
+    ],
+    "detail": {
+        "pipelines_running_count": 1,
+        "state": "RUNNING",
+        "pipeline": "0",
+        "channel_arn": "arn:aws:medialive:ap-southeast-1:962222257213:channel:6143654",
+        "message": "Pipeline started for channel"
+    }
+}
