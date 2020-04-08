@@ -1,4 +1,7 @@
 #!/bin/bash
+sam package \
+    --s3-bucket panyapoc-sgsrc
+
 sam deploy \
     --stack-name mobilelive \
     --profile howto \
