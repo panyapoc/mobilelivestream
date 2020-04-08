@@ -19,7 +19,7 @@ from datetime import datetime
 # BOTO3
 medialive = boto3.client('medialive')
 dynamodb = boto3.resource("dynamodb")
-sns = boto3.resource("sns")
+sns = boto3.client('sns')
 
 ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 ddb_vod = dynamodb.Table(os.environ['ddb_vod'])
@@ -82,6 +82,7 @@ def lambda_handler(event, context):
     # 4. Update VoD table
     # 5. Update Channel State on DDB ✅
     elif event['detail']['state'] == 'STOPPED' :
+        ChannelID = getChannelID(event['detail']['channel_arn'])
         print(f'updating channel {ChannelID} State to STOPPED')
         ddb_channel.update_item(
             Key={
