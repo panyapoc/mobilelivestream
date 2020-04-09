@@ -15,13 +15,12 @@ import json
 import os
 import uuid
 from datetime import datetime
-import awscli
-from awscli.clidriver import create_clidriver
 
 # BOTO3
 medialive = boto3.client('medialive')
 dynamodb = boto3.resource("dynamodb")
 sns = boto3.client('sns')
+s3 = boto3.resource('s3')
 
 ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 ddb_vod = dynamodb.Table(os.environ['ddb_vod'])
@@ -100,10 +99,22 @@ def lambda_handler(event, context):
         # 1. Start moving archive file to new location
         origins3key = Channel['Item']['VoDS3key']
         VoDID = Channel['Item']['VoDID']
-        driver = create_clidriver()
-        driver.main(f's3 mv s3://{archive_s3}/{origins3key}    s3://{archive_s3}/{vod_s3key}/{VoDID}/ --recursive'.split())
+        for obj in s3.Bucket(archive_s3).objects.filter(Prefix=origins3key):
+            # Copy object A as object B
+            filename = getFilename(obj.key)
+            print(f'src: {obj.key}')
+            print(f'destination: {vod_s3key}/{VoDID}/{filename}')
+            copy_source = {
+                'Bucket': archive_s3,
+                'Key': obj.key
+            }
+            destbucket = s3.Bucket('panyapoc-test-vod')
+            obj = destbucket.Object(f'{vod_s3key}/{VoDID}/{filename}')
+            obj.copy(copy_source)
 
-        dest_path = f's3://{archive_s3}/{vod_s3key}/{VoDID}/'
+        for obj in s3.Bucket(archive_s3).objects.filter(Prefix=origins3key):
+            s3.Object(archive_s3, obj.key).delete()
+            print(f'deleted {obj.key}')
 
         # 2. Create .m3u8 file from list of .ts file
 
@@ -146,3 +157,7 @@ def lambda_handler(event, context):
 
 def getChannelID (ChannelARN) :
     return ChannelARN.rsplit(':',1)[1]
+
+
+def getFilename (s3key) :
+    return s3key.rsplit('/',1)[1]
