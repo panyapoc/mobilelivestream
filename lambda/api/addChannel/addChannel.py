@@ -219,40 +219,7 @@ def lambda_handler(event, context):
             'TimecodeConfig': {
                 'Source': 'EMBEDDED'
             },
-            'VideoDescriptions': [{
-                    'CodecSettings': {
-                        'H264Settings': {
-                            'AfdSignaling': 'NONE',
-                            'ColorMetadata': 'INSERT',
-                            'AdaptiveQuantization': 'MEDIUM',
-                            'EntropyEncoding': 'CABAC',
-                            'FlickerAq': 'ENABLED',
-                            'FramerateControl': 'INITIALIZE_FROM_SOURCE',
-                            'GopBReference': 'DISABLED',
-                            'GopClosedCadence': 1,
-                            'GopNumBFrames': 2,
-                            'GopSize': 90,
-                            'GopSizeUnits': 'FRAMES',
-                            'SubgopLength': 'FIXED',
-                            'ScanType': 'PROGRESSIVE',
-                            'Level': 'H264_LEVEL_AUTO',
-                            'LookAheadRateControl': 'MEDIUM',
-                            'NumRefFrames': 1,
-                            'ParControl': 'INITIALIZE_FROM_SOURCE',
-                            'Profile': 'MAIN',
-                            'RateControlMode': 'CBR',
-                            'Syntax': 'DEFAULT',
-                            'SceneChangeDetect': 'ENABLED',
-                            'SpatialAq': 'ENABLED',
-                            'TemporalAq': 'ENABLED',
-                            'TimecodeInsertion': 'DISABLED'
-                        }
-                    },
-                    'Name': 'video_wz2iqp',
-                    'RespondToAfd': 'NONE',
-                    'Sharpness': 50,
-                    'ScalingBehavior': 'DEFAULT'
-                },
+            'VideoDescriptions': [
                 {
                     'CodecSettings': {
                         'H264Settings': {
