@@ -195,7 +195,7 @@ Resources:
             DomainName: !Join ['',[!Ref ServerlessRestApi,'.execute-api.',!Ref 'AWS::Region','.amazonaws.com']]
             Id: api
             CustomOriginConfig:
-            OriginProtocolPolicy: https-only
+              OriginProtocolPolicy: https-only
         PriceClass: PriceClass_200
   MediaLiveSecurityGroup:
     Type: AWS::MediaLive::InputSecurityGroup
