@@ -117,13 +117,11 @@ def lambda_handler(event, context):
             print(f'deleted {obj.key}')
 
         # 2. Create .m3u8 file from list of .ts file
-
-
         # 3. Add new .m3u8 to DDB for future playing
         # 4. Update VoD table
         timestamp = datetime.timestamp(datetime.now())
         print("end timestamp =", timestamp)
-        VoDEndpoint = f'{CloudFrontVoDURL}/{vod_s3key}/{VoDID}/index.m3u8'
+        VoDEndpoint = f'https://{CloudFrontVoDURL}/{vod_s3key}/{VoDID}/index.m3u8'
         ddb_vod.update_item(
             Key={
                 'VoDID': VoDID

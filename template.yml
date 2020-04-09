@@ -292,7 +292,7 @@ Resources:
           snstopic : !Ref ChannelReadySNS
           archive_s3 : !Ref LiveStreamArchiveBucket
           vod_s3key : 'vod'
-          CloudFrontVoDURL : 'TEMP' #TODO: !Ref CF path
+          CloudFrontVoDURL : !GetAtt WebCDN.DomainName
       CodeUri: ./lambda/event/onChannelStateChange/
       Events:
         CWEvent:
