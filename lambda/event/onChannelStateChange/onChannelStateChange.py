@@ -27,6 +27,7 @@ ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 ddb_vod = dynamodb.Table(os.environ['ddb_vod'])
 archive_s3 = os.environ['archive_s3']
 vod_s3key = os.environ['vod_s3key']
+CloudFrontVoDURL = os.environ['CloudFrontVoDURL']
 
 def lambda_handler(event, context):
     # CloudWatch Channel State Change Event idle -> Running
@@ -54,7 +55,7 @@ def lambda_handler(event, context):
         )
 
         timestamp = datetime.timestamp(datetime.now())
-        print("timestamp =", timestamp)
+        print("start timestamp =", timestamp)
 
         VoD = {
             'VoDID' : VoDID,
@@ -96,11 +97,34 @@ def lambda_handler(event, context):
             Key={ 'ChannelID': ChannelID }
         )
 
+        # 1. Start moving archive file to new location
         origins3key = Channel['Item']['VoDS3key']
+        VoDID = Channel['Item']['VoDID']
         driver = create_clidriver()
-        driver.main(f's3 mv s3://{archive_s3}/{origins3key}    s3://{archive_s3}/{vod_s3key} --recursive'.split())
+        driver.main(f's3 mv s3://{archive_s3}/{origins3key}    s3://{archive_s3}/{vod_s3key}/{VoDID}/ --recursive'.split())
+
+        dest_path = f's3://{archive_s3}/{vod_s3key}/{VoDID}/'
+
+        # 2. Create .m3u8 file from list of .ts file
 
 
+        # 3. Add new .m3u8 to DDB for future playing
+        # 4. Update VoD table
+        timestamp = datetime.timestamp(datetime.now())
+        print("end timestamp =", timestamp)
+        VoDEndpoint = f'{CloudFrontVoDURL}/{vod_s3key}/{VoDID}/index.m3u8'
+        ddb_vod.update_item(
+            Key={
+                'VoDID': VoDID
+            },
+            UpdateExpression='set EndTime = :EndTime, VoDEndpoint = :VoDEndpoint',
+            ExpressionAttributeValues={
+                ':EndTime': str(timestamp),
+                ':VoDEndpoint' : VoDEndpoint
+            }
+        )
+
+        # 5. Update Channel State on DDB ✅
         print(f'updating channel {ChannelID} State to STOPPED')
         ddb_channel.update_item(
             Key={
