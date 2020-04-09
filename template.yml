@@ -115,6 +115,7 @@ Resources:
             - GET
             - HEAD
             - OPTIONS
+          Compress: true
           DefaultTTL: 60
           MaxTTL: 60
           ForwardedValues:
@@ -123,6 +124,54 @@ Resources:
             QueryString: true
           TargetOriginId: webstatic
           ViewerProtocolPolicy: redirect-to-https
+        CacheBehaviors:
+          # Alternative behavior for the API gateway
+          - AllowedMethods:
+              - DELETE
+              - GET
+              - HEAD
+              - OPTIONS
+              - PATCH
+              - POST
+              - PUT
+            CachedMethods: # Cache get requests only
+              - GET
+              - HEAD
+              - OPTIONS
+            Compress: true
+            DefaultTTL: 60
+            MaxTTL: 60
+            ForwardedValues:
+              Cookies:
+                Forward: all
+              Headers: # Need to whitelist all headers that API gateway requires:
+                - Accept
+                - Referer
+                - Athorization
+                - Content-Type
+              QueryString: true
+            PathPattern: "/Prod/*"
+            TargetOriginId: api
+            ViewerProtocolPolicy: https-only
+          # Alternative behavior for VOD stream
+          - AllowedMethods:
+              - GET
+              - OPTIONS
+              - POST
+            CachedMethods: # Cache get requests only
+              - GET
+              - HEAD
+              - OPTIONS
+            Compress: true
+            DefaultTTL: 60
+            MaxTTL: 60
+            ForwardedValues:
+              Headers:
+                - Origin
+              QueryString: true
+            PathPattern: "/vod/*"
+            TargetOriginId: vod
+            ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: true
         HttpVersion: http2
@@ -132,10 +181,21 @@ Resources:
             # https://stackoverflow.com/q/38735306
             #DomainName: !GetAtt WebBucket.DomainName
             DomainName: !Sub ${LiveStreamArchiveBucket}.s3.amazonaws.com
-            Id: webstatic
+            Id: vod
             S3OriginConfig:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${LiveStreamArchiveOriginAccessIdentity}
             OriginPath: /vod
+          -
+            DomainName: !Sub ${LiveStreamArchiveBucket}.s3.amazonaws.com
+            Id: webstatic
+            S3OriginConfig:
+              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${LiveStreamArchiveOriginAccessIdentity}
+            OriginPath: /web
+          -
+            DomainName: !Join ['',[!Ref ServerlessRestApi,'.execute-api.',!Ref 'AWS::Region','.amazonaws.com']]
+            Id: api
+            CustomOriginConfig:
+            OriginProtocolPolicy: https-only
         PriceClass: PriceClass_200
   MediaLiveSecurityGroup:
     Type: AWS::MediaLive::InputSecurityGroup
