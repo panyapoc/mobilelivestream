@@ -2,6 +2,11 @@
 
 Mobile Live Streaming Solution on AWS
 
+## Encoding Consideration
+
+- [Twitch Encoding recommendation](https://stream.twitch.tv/encoding/)
+- [YT Encoding recommendation](https://support.google.com/youtube/answer/2853702?hl=en)
+-
 ## Deploy
 
 Howto acc
