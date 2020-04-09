@@ -74,7 +74,15 @@ Resources:
 
   LiveStreamArchiveBucket:
     Type: AWS::S3::Bucket
-    # Properties:
+    Properties:
+      CorsConfiguration:
+        CorsRules:
+          - AllowedHeaders:
+              - '*'
+            AllowedMethods:
+              - GET
+            AllowedOrigins:
+              - '*'
     #   BucketName: !Sub '${ProjectName}-livestream-archive'
 
   LiveStreamArchiveOriginAccessIdentity:
@@ -110,6 +118,8 @@ Resources:
           DefaultTTL: 60
           MaxTTL: 60
           ForwardedValues:
+            Headers:
+              - Origin
             QueryString: true
           TargetOriginId: webstatic
           ViewerProtocolPolicy: redirect-to-https

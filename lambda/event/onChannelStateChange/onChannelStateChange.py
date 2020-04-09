@@ -108,7 +108,7 @@ def lambda_handler(event, context):
                 'Bucket': archive_s3,
                 'Key': obj.key
             }
-            destbucket = s3.Bucket('panyapoc-test-vod')
+            destbucket = s3.Bucket(archive_s3)
             obj = destbucket.Object(f'{vod_s3key}/{VoDID}/{filename}')
             obj.copy(copy_source)
 
