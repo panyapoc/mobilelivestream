@@ -157,7 +157,7 @@ def lambda_handler(event, context):
                             'CodecSpecification': 'RFC_4281',
                             'DirectoryStructure': 'SINGLE_DIRECTORY',
                             'SegmentsPerSubdirectory': 10000,
-                            'Mode': 'LIVE'
+                            'Mode': 'VOD'
                         }
                     },
                     'Name': 'S3VOD',
@@ -193,8 +193,7 @@ def lambda_handler(event, context):
                         ],
                         'CaptionDescriptionNames': []
                     }]
-                    }
-,
+                },
                 {
                     'OutputGroupSettings': {
                         'MediaPackageGroupSettings': {

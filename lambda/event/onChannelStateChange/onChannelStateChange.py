@@ -139,12 +139,13 @@ def lambda_handler(event, context):
             Key={
                 'ChannelID': ChannelID
             },
-            UpdateExpression='set #keyState = :State',
+            UpdateExpression='set #keyState = :State, VoDID = :VoDID',
             ExpressionAttributeNames={
                 '#keyState' : 'State',
             },
             ExpressionAttributeValues={
-                ':State': 'IDLE'
+                ':State': 'IDLE',
+                ':VoDID': None
             }
         )
 
