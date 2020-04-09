@@ -13,7 +13,7 @@ import os
 # BOTO3
 medialive = boto3.client('medialive')
 mediapackage = boto3.client('mediapackage')
-dynamodb = boto3.resource("dynamodb")
+dynamodb = boto3.resource('dynamodb')
 
 # ENV VAR
 medialive_sg = os.environ['medialive_sg']
@@ -116,70 +116,85 @@ def lambda_handler(event, context):
                 }
             ],
             'CaptionDescriptions': [],
-            'OutputGroups': [{
+            'OutputGroups': [
+                {
                     'OutputGroupSettings': {
-                        'ArchiveGroupSettings': {
+                        'HlsGroupSettings': {
+                            'AdMarkers': [],
+                            'CaptionLanguageSetting': 'OMIT',
+                            'CaptionLanguageMappings': [],
+                            'HlsCdnSettings': {
+                                'HlsBasicPutSettings': {
+                                    'NumRetries': 10,
+                                    'ConnectionRetryInterval': 1,
+                                    'RestartDelay': 15,
+                                    'FilecacheDuration': 300
+                                }
+                            },
+                            'InputLossAction': 'EMIT_OUTPUT',
+                            'ManifestCompression': 'NONE',
                             'Destination': {
                                 'DestinationRefId': medialive_destination_s3
                             },
-                            'RolloverInterval': 300
+                            'IvInManifest': 'INCLUDE',
+                            'IvSource': 'FOLLOWS_SEGMENT_NUMBER',
+                            'ClientCache': 'ENABLED',
+                            'TsFileMode': 'SEGMENTED_FILES',
+                            'ManifestDurationFormat': 'FLOATING_POINT',
+                            'SegmentationMode': 'USE_SEGMENT_DURATION',
+                            'RedundantManifest': 'DISABLED',
+                            'OutputSelection': 'MANIFESTS_AND_SEGMENTS',
+                            'StreamInfResolution': 'INCLUDE',
+                            'IFrameOnlyPlaylists': 'DISABLED',
+                            'IndexNSegments': 10,
+                            'ProgramDateTime': 'EXCLUDE',
+                            'ProgramDateTimePeriod': 600,
+                            'KeepSegments': 21,
+                            'KegmentLength': 10,
+                            'TimedMetadataId3Frame': 'PRIV',
+                            'TimedMetadataId3Period': 10,
+                            'HlsId3SegmentTagging': 'DISABLED',
+                            'CodecSpecification': 'RFC_4281',
+                            'DirectoryStructure': 'SINGLE_DIRECTORY',
+                            'SegmentsPerSubdirectory': 10000,
+                            'Mode': 'LIVE'
                         }
                     },
-                    'Name': 'Archive',
+                    'Name': 'S3VOD',
                     'Outputs': [{
                         'OutputSettings': {
-                            'ArchiveOutputSettings': {
-                                'NameModifier': '_1',
-                                'ContainerSettings': {
-                                    'M2tsSettings': {
-                                        'CcDescriptor': 'DISABLED',
-                                        'Ebif': 'NONE',
-                                        'NielsenId3Behavior': 'NO_PASSTHROUGH',
-                                        'ProgramNum': 1,
-                                        'PatInterval': 100,
-                                        'PmtInterval': 100,
-                                        'PcrControl': 'PCR_EVERY_PES_PACKET',
-                                        'PcrPeriod': 40,
-                                        'TimedMetadataBehavior': 'NO_PASSTHROUGH',
-                                        'BufferModel': 'MULTIPLEX',
-                                        'RateMode': 'CBR',
-                                        'AudioBufferModel': 'ATSC',
-                                        'AudioStreamType': 'DVB',
-                                        'AudioFramesPerPes': 2,
-                                        'SegmentationStyle': 'MAINTAIN_CADENCE',
-                                        'SegmentationMarkers': 'NONE',
-                                        'EbpPlacement': 'VIDEO_AND_AUDIO_PIDS',
-                                        'EbpAudioInterval': 'VIDEO_INTERVAL',
-                                        'EsRateInPes': 'EXCLUDE',
-                                        'Arib': 'DISABLED',
-                                        'AribCaptionsPidControl': 'AUTO',
-                                        'AbsentInputAudioBehavior': 'ENCODE_SILENCE',
-                                        'PmtPid': '480',
-                                        'VideoPid': '481',
-                                        'AudioPids': '482-498',
-                                        'DvbTeletextPid': '499',
-                                        'DvbSubPids': '460-479',
-                                        'Scte27Pids': '450-459',
-                                        'Scte35Pid': '500',
-                                        'Scte35Control': 'NONE',
-                                        'Klv': 'NONE',
-                                        'KlvDataPids': '501',
-                                        'TimedMetadataPid': '502',
-                                        'EtvPlatformPid': '504',
-                                        'EtvSignalPid': '505',
-                                        'AribCaptionsPid': '507'
+                            'HlsOutputSettings': {
+                                'NameModifier': 'vod',
+                                'HlsSettings': {
+                                    'StandardHlsSettings': {
+                                        'M3u8Settings': {
+                                            'AudioFramesPerPes': 4,
+                                            'AudioPids': '492-498',
+                                            'NielsenId3Behavior': 'NO_PASSTHROUGH',
+                                            'PcrControl': 'PCR_EVERY_PES_PACKET',
+                                            'PmtPid': '480',
+                                            'ProgramNum': 1,
+                                            'Scte35Pid': '500',
+                                            'Scte35Behavior': 'NO_PASSTHROUGH',
+                                            'TimedMetadataPid': '502',
+                                            'TimedMetadataBehavior': 'NO_PASSTHROUGH',
+                                            'VideoPid': '481'
+                                        },
+                                        'AudioRenditionSets': 'program_audio'
                                     }
-                                }
+                                },
+                                'H265PackagingType': 'HVC1'
                             }
                         },
-                        'OutputName': 'Archive_1',
-                        'VideoDescriptionName': 'video_liuejc',
+                        'OutputName': 'S3VOD_1',
+                        'VideoDescriptionName': 'video_6er6o',
                         'AudioDescriptionNames': [
                             'audio_1'
                         ],
                         'CaptionDescriptionNames': []
                     }]
-                },
+                    }
+,
                 {
                     'OutputGroupSettings': {
                         'MediaPackageGroupSettings': {

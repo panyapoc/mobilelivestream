@@ -1,0 +1,230 @@
+{
+  "name": "Channel-7dbcd932-7a0b-11ea-8acc-9da00c7324e0",
+  "id": "133303",
+  "arn": "arn:aws:medialive:ap-southeast-1:962222257213:channel:133303",
+  "inputAttachments": [
+    {
+      "inputId": "7701047",
+      "inputAttachmentName": "input7dbcd932-7a0b-11ea-8acc-9da00c7324e0",
+      "inputSettings": {
+        "sourceEndBehavior": "CONTINUE",
+        "inputFilter": "AUTO",
+        "filterStrength": 1,
+        "deblockFilter": "DISABLED",
+        "denoiseFilter": "DISABLED",
+        "audioSelectors": [],
+        "captionSelectors": []
+      }
+    }
+  ],
+  "state": "IDLE",
+  "pipelinesRunningCount": 0,
+  "destinations": [
+    {
+      "id": "58406153-9aa6-415a-93be-5712561a21fe",
+      "settings": [],
+      "mediaPackageSettings": [
+        {
+          "channelId": "7dbcd932-7a0b-11ea-8acc-9da00c7324e0"
+        }
+      ]
+    },
+    {
+      "id": "4cvwq",
+      "settings": [
+        {
+          "url": "s3ssl://mobilelive-livestreamarchivebucket-fgpktt26u82z/delivery/7dbcd932-7a0b-11ea-8acc-9da00c7324e0/index.m3u8"
+        }
+      ],
+      "mediaPackageSettings": []
+    }
+  ],
+  "egressEndpoints": [
+    {
+      "sourceIp": "18.141.52.175"
+    }
+  ],
+  "encoderSettings": {
+    "audioDescriptions": [
+      {
+        "audioSelectorName": "audio_2",
+        "audioTypeControl": "FOLLOW_INPUT",
+        "languageCodeControl": "FOLLOW_INPUT",
+        "name": "audio_2"
+      },
+      {
+        "audioTypeControl": "FOLLOW_INPUT",
+        "languageCodeControl": "FOLLOW_INPUT",
+        "name": "audio_lwmbhm"
+      }
+    ],
+    "captionDescriptions": [],
+    "outputGroups": [
+      {
+        "outputGroupSettings": {
+          "mediaPackageGroupSettings": {
+            "destination": {
+              "destinationRefId": "58406153-9aa6-415a-93be-5712561a21fe"
+            }
+          }
+        },
+        "name": "MobilePackage",
+        "outputs": [
+          {
+            "outputSettings": {
+              "mediaPackageOutputSettings": {}
+            },
+            "outputName": "MobilePackage_1",
+            "videoDescriptionName": "video_wz2iqp",
+            "audioDescriptionNames": [
+              "audio_2"
+            ],
+            "captionDescriptionNames": []
+          }
+        ]
+      },
+      {
+        "outputGroupSettings": {
+          "hlsGroupSettings": {
+            "adMarkers": [],
+            "captionLanguageSetting": "OMIT",
+            "captionLanguageMappings": [],
+            "hlsCdnSettings": {
+              "hlsBasicPutSettings": {
+                "numRetries": 10,
+                "connectionRetryInterval": 1,
+                "restartDelay": 15,
+                "filecacheDuration": 300
+              }
+            },
+            "inputLossAction": "EMIT_OUTPUT",
+            "manifestCompression": "NONE",
+            "destination": {
+              "destinationRefId": "4cvwq"
+            },
+            "ivInManifest": "INCLUDE",
+            "ivSource": "FOLLOWS_SEGMENT_NUMBER",
+            "clientCache": "ENABLED",
+            "tsFileMode": "SEGMENTED_FILES",
+            "manifestDurationFormat": "FLOATING_POINT",
+            "segmentationMode": "USE_SEGMENT_DURATION",
+            "redundantManifest": "DISABLED",
+            "outputSelection": "MANIFESTS_AND_SEGMENTS",
+            "streamInfResolution": "INCLUDE",
+            "iFrameOnlyPlaylists": "DISABLED",
+            "indexNSegments": 10,
+            "programDateTime": "EXCLUDE",
+            "programDateTimePeriod": 600,
+            "keepSegments": 21,
+            "segmentLength": 10,
+            "timedMetadataId3Frame": "PRIV",
+            "timedMetadataId3Period": 10,
+            "hlsId3SegmentTagging": "DISABLED",
+            "codecSpecification": "RFC_4281",
+            "directoryStructure": "SINGLE_DIRECTORY",
+            "segmentsPerSubdirectory": 10000,
+            "mode": "LIVE"
+          }
+        },
+        "name": "S3VoD",
+        "outputs": [
+          {
+            "outputSettings": {
+              "hlsOutputSettings": {
+                "nameModifier": "vod",
+                "hlsSettings": {
+                  "standardHlsSettings": {
+                    "m3u8Settings": {
+                      "audioFramesPerPes": 4,
+                      "audioPids": "492-498",
+                      "nielsenId3Behavior": "NO_PASSTHROUGH",
+                      "pcrControl": "PCR_EVERY_PES_PACKET",
+                      "pmtPid": "480",
+                      "programNum": 1,
+                      "scte35Pid": "500",
+                      "scte35Behavior": "NO_PASSTHROUGH",
+                      "timedMetadataPid": "502",
+                      "timedMetadataBehavior": "NO_PASSTHROUGH",
+                      "videoPid": "481"
+                    },
+                    "audioRenditionSets": "program_audio"
+                  }
+                },
+                "h265PackagingType": "HVC1"
+              }
+            },
+            "outputName": "j2za5x",
+            "videoDescriptionName": "video_6er6o",
+            "audioDescriptionNames": [
+              "audio_lwmbhm"
+            ],
+            "captionDescriptionNames": []
+          }
+        ]
+      }
+    ],
+    "timecodeConfig": {
+      "source": "EMBEDDED"
+    },
+    "videoDescriptions": [
+      {
+        "codecSettings": {
+          "h264Settings": {
+            "afdSignaling": "NONE",
+            "colorMetadata": "INSERT",
+            "adaptiveQuantization": "MEDIUM",
+            "bitrate": 8000000,
+            "entropyEncoding": "CABAC",
+            "flickerAq": "ENABLED",
+            "forceFieldPictures": "DISABLED",
+            "framerateControl": "SPECIFIED",
+            "framerateNumerator": 30,
+            "framerateDenominator": 1,
+            "gopBReference": "DISABLED",
+            "gopClosedCadence": 1,
+            "gopNumBFrames": 2,
+            "gopSize": 90,
+            "gopSizeUnits": "FRAMES",
+            "subgopLength": "FIXED",
+            "scanType": "PROGRESSIVE",
+            "level": "H264_LEVEL_AUTO",
+            "lookAheadRateControl": "MEDIUM",
+            "numRefFrames": 1,
+            "parControl": "SPECIFIED",
+            "parNumerator": 1,
+            "parDenominator": 1,
+            "profile": "MAIN",
+            "rateControlMode": "CBR",
+            "syntax": "DEFAULT",
+            "sceneChangeDetect": "ENABLED",
+            "spatialAq": "ENABLED",
+            "temporalAq": "ENABLED",
+            "timecodeInsertion": "DISABLED"
+          }
+        },
+        "height": 1080,
+        "name": "video_wz2iqp",
+        "respondToAfd": "NONE",
+        "sharpness": 50,
+        "scalingBehavior": "DEFAULT",
+        "width": 1920
+      },
+      {
+        "name": "video_6er6o",
+        "respondToAfd": "NONE",
+        "sharpness": 50,
+        "scalingBehavior": "DEFAULT"
+      }
+    ]
+  },
+  "roleArn": "arn:aws:iam::962222257213:role/mobilelive-MediaLiveRole-CZRF0FEU4U",
+  "inputSpecification": {
+    "codec": "HEVC",
+    "resolution": "HD",
+    "maximumBitrate": "MAX_50_MBPS"
+  },
+  "logLevel": "DISABLED",
+  "tags": {},
+  "channelClass": "SINGLE_PIPELINE",
+  "pipelineDetails": []
+}
