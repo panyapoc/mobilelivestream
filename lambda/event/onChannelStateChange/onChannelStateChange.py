@@ -83,6 +83,14 @@ def lambda_handler(event, context):
     # 5. Update Channel State on DDB ✅
     elif event['detail']['state'] == 'STOPPED' :
         ChannelID = getChannelID(event['detail']['channel_arn'])
+
+        Channel = ddb_channel.get_item(
+            Key={ 'ChannelID': ChannelID }
+        )
+
+        origins3key = Channel['Item']
+
+
         print(f'updating channel {ChannelID} State to STOPPED')
         ddb_channel.update_item(
             Key={

@@ -45,6 +45,7 @@ sam deploy \
 - State : IDLE | IN_USE | IN_PROGESS
 - RTMPEndpoint : RMTP input Endpoint for mobile to stream to this channel
 - MediaPackageHLSEndpoint : HLS Endpoint to view livestream
+- VoDS3key : S3 key folder
 
 logging of livestream is p much VOD table
 

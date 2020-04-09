@@ -318,7 +318,7 @@ def lambda_handler(event, context):
         'State' : 'IDLE',
         'RTMPEndpoint' : input_endpoint,
         'MediaPackageHLSEndpoint' : mediapackage_endpoint,
-        'VoDS3key' : 'channeluuid'
+        'VoDS3key' : f'{archive_s3}/delivery/{channeluuid}/'
     }
 
     ddb_put_item = ddb_channel.put_item(
