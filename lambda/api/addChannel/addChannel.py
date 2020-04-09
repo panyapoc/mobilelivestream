@@ -248,7 +248,7 @@ def lambda_handler(event, context):
                             'TimecodeInsertion': 'DISABLED'
                         }
                     },
-                    'Name': 'video_liuejc',
+                    'Name': 'video_wz2iqp',
                     'RespondToAfd': 'NONE',
                     'Sharpness': 50,
                     'ScalingBehavior': 'DEFAULT'
@@ -293,6 +293,12 @@ def lambda_handler(event, context):
                     'Sharpness': 50,
                     'ScalingBehavior': 'DEFAULT',
                     'Width': 1920
+                },
+                {
+                    'Name': 'video_6er6o',
+                    'RespondToAfd': 'NONE',
+                    'Sharpness': 50,
+                    'ScalingBehavior': 'DEFAULT'
                 }
             ]
         },
