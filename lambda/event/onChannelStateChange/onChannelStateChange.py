@@ -15,6 +15,8 @@ import json
 import os
 import uuid
 from datetime import datetime
+import awscli
+from awscli.clidriver import create_clidriver
 
 # BOTO3
 medialive = boto3.client('medialive')
@@ -23,6 +25,8 @@ sns = boto3.client('sns')
 
 ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 ddb_vod = dynamodb.Table(os.environ['ddb_vod'])
+archive_s3 = os.environ['archive_s3']
+vod_s3key = os.environ['vod_s3key']
 
 def lambda_handler(event, context):
     # CloudWatch Channel State Change Event idle -> Running
@@ -32,16 +36,20 @@ def lambda_handler(event, context):
     if event['detail']['state'] == 'RUNNING' :
         ChannelID = getChannelID(event['detail']['channel_arn'])
         print(f'updating channel {ChannelID} State to RUNNING')
+
+        VoDID = str(uuid.uuid4())
+
         ddb_channel.update_item(
             Key={
                 'ChannelID': ChannelID
             },
-            UpdateExpression='set #keyState = :State',
+            UpdateExpression='set #keyState = :State, VoDID = :VoDID',
             ExpressionAttributeNames={
                 '#keyState' : 'State',
             },
             ExpressionAttributeValues={
-                ':State': 'RUNNING'
+                ':State': 'RUNNING',
+                ':VoDID': VoDID
             }
         )
 
@@ -49,7 +57,7 @@ def lambda_handler(event, context):
         print("timestamp =", timestamp)
 
         VoD = {
-            'VoDID' : str(uuid.uuid4()),
+            'VoDID' : VoDID,
             'ChannelId' : ChannelID,
             'StartTime' : str(timestamp),
             'EndTime' : None,
@@ -88,7 +96,9 @@ def lambda_handler(event, context):
             Key={ 'ChannelID': ChannelID }
         )
 
-        origins3key = Channel['Item']
+        origins3key = Channel['Item']['VoDS3key']
+        driver = create_clidriver()
+        driver.main(f's3 mv s3://{archive_s3}/{origins3key}    s3://{archive_s3}/{vod_s3key} --recursive'.split())
 
 
         print(f'updating channel {ChannelID} State to STOPPED')
