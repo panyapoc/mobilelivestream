@@ -153,25 +153,6 @@ Resources:
             PathPattern: "/Prod/*"
             TargetOriginId: api
             ViewerProtocolPolicy: https-only
-          # Alternative behavior for VOD stream
-          - AllowedMethods:
-              - GET
-              - OPTIONS
-              - POST
-            CachedMethods: # Cache get requests only
-              - GET
-              - HEAD
-              - OPTIONS
-            Compress: true
-            DefaultTTL: 60
-            MaxTTL: 60
-            ForwardedValues:
-              Headers:
-                - Origin
-              QueryString: true
-            PathPattern: "/vod/*"
-            TargetOriginId: vod
-            ViewerProtocolPolicy: redirect-to-https
         DefaultRootObject: index.html
         Enabled: true
         HttpVersion: http2
@@ -181,16 +162,9 @@ Resources:
             # https://stackoverflow.com/q/38735306
             #DomainName: !GetAtt WebBucket.DomainName
             DomainName: !Sub ${LiveStreamArchiveBucket}.s3.amazonaws.com
-            Id: vod
-            S3OriginConfig:
-              OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${LiveStreamArchiveOriginAccessIdentity}
-            OriginPath: /vod
-          -
-            DomainName: !Sub ${LiveStreamArchiveBucket}.s3.amazonaws.com
             Id: webstatic
             S3OriginConfig:
               OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${LiveStreamArchiveOriginAccessIdentity}
-            OriginPath: /web
           -
             DomainName: !Join ['',[!Ref ServerlessRestApi,'.execute-api.',!Ref 'AWS::Region','.amazonaws.com']]
             Id: api
