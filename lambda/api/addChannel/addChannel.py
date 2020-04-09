@@ -150,7 +150,7 @@ def lambda_handler(event, context):
                             'ProgramDateTime': 'EXCLUDE',
                             'ProgramDateTimePeriod': 600,
                             'KeepSegments': 21,
-                            'KegmentLength': 10,
+                            'SegmentLength': 10,
                             'TimedMetadataId3Frame': 'PRIV',
                             'TimedMetadataId3Period': 10,
                             'HlsId3SegmentTagging': 'DISABLED',
