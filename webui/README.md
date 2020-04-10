@@ -1,4 +1,4 @@
-# webui
+# Webui
 
 ## Project setup
 ```
