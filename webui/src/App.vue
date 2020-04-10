@@ -2,18 +2,18 @@
   <div id="app">
     <NavBar />
     <ChannelList />
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+    <VoDList />
   </div>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+// import VoDList from './components/VoDList.vue'
 import NavBar from "./components/NavBar.vue";
 import ChannelList from "./components/ChannelList.vue";
 export default {
   name: "App",
   components: {
-    // HelloWorld,
+    // VoDList,
     NavBar,
     ChannelList
   }
