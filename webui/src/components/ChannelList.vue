@@ -3,9 +3,14 @@
     <b-row>
       <b-col class="text-left"><h1>Live Channel</h1></b-col>
       <b-col class="text-right">
+        <b-button-group>
+        <b-button variant="primary" @click="refreshChannel()"
+          ><b-icon icon="arrow-clockwise"></b-icon
+        ></b-button>
         <b-button variant="primary" @click="newChannel()"
           >New Channel <b-icon icon="file-plus"></b-icon
         ></b-button>
+        </b-button-group>
       </b-col>
     </b-row>
 

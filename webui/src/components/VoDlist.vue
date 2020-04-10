@@ -2,6 +2,11 @@
   <div id="ChannelList">
     <b-row>
       <b-col align-v="start" class="text-left"><h1>Video On-Demand</h1></b-col>
+      <b-col class="text-right">
+      <b-button variant="primary" @click="refreshVOD()"
+          ><b-icon icon="arrow-clockwise"></b-icon
+        ></b-button>
+        </b-col>
     </b-row>
     <b-table
       :items="items"
@@ -77,8 +82,7 @@ export default {
       else {
         var a = new Date(UNIX_timestamp * 1000);
         return a.toLocaleDateString() + " " + a.toLocaleTimeString();
-      }
-
+    }
       // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       // var year = a.getFullYear();
       // var month = a.getMonth()
@@ -88,6 +92,18 @@ export default {
       // var sec = a.getSeconds();
       // var time = `${date}/${month}/${year} ${hour}:${min}:${sec}`;
       // return time;
+    },
+    refreshVOD() {
+      this.$http
+        .get(`${rootapi}/vod`)
+        .then(response => {
+          let channels = response.data;
+          console.table(channels);
+          this.items = channels;
+        })
+        .catch(e => {
+          this.errors.push(e);
+        });
     }
   }
 };

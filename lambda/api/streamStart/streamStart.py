@@ -28,7 +28,6 @@ def lambda_handler(event, context):
                 'statusCode': 200,
                 'body': json.dumps(response)
             }
-        Channel['State'] = medialive_start_channel['State']
         ddb_channel.update_item(
             Key={
                 'ChannelId': ChannelId
@@ -78,7 +77,6 @@ def lambda_handler(event, context):
                     'statusCode': 200,
                     'body': json.dumps(response)
                 }
-            Channel['State'] = medialive_start_channel['State']
             ddb_channel.update_item(
                 Key={
                     'ChannelId': ChannelId
