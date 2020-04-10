@@ -1,9 +1,17 @@
 <template>
   <div id="ChannelList">
+    <h1>Live Channel</h1>
     <b-table :items="items" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" responsive="sm">
       <template v-slot:cell(MediaPackageHLSEndpoint)="data">
         <div>
           <b-button :href="data.value" variant="success">Play</b-button>
+        </div>
+      </template>
+      <template v-slot:cell(RTMPEndpoint)="data">
+        <div>
+        <b-button v-b-tooltip.hover :title="data.value">
+          Copy <b-icon icon="file-earmark" aria-hidden="true"></b-icon>
+        </b-button>
         </div>
       </template>
     </b-table>
@@ -28,8 +36,9 @@ export default {
       sortDesc: false,
       fields: [
         { key: "ChannelID", sortable: true },
+        { key: "State", sortable: true },
+        { key: "RTMPEndpoint", sortable: false, label: "RTMP"},
         { key: "MediaPackageHLSEndpoint", sortable: false, label: "Player"},
-        { key: "State", sortable: true }
       ],
       items: []
     };
@@ -76,6 +85,9 @@ export default {
   text-align: center;
   color: #2c3e50; */
   max-width: 75rem;
-  margin: 0 auto;
+  margin: 50px auto auto auto;
+}
+h1 {
+    margin-bottom: 20px;
 }
 </style>

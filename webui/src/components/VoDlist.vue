@@ -1,10 +1,15 @@
 <template>
   <div id="ChannelList">
+    <h1>Video Ondemand</h1>
     <b-table :items="items" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" responsive="sm">
-      <template v-slot:cell(MediaPackageHLSEndpoint)="data">
-        <div>
-          <b-button :href="data.value" variant="success">Play</b-button>
-        </div>
+      <template v-slot:cell(VoDEndpoint)="data">
+        <b-button :href="data.value" variant="success">Play</b-button>
+      </template>
+      <template v-slot:cell(StartTime)="data">
+        <span>{{ timeConverter(data.value) }}</span>
+      </template>
+      <template v-slot:cell(EndTime)="data">
+        <span>{{ timeConverter(data.value) }}</span>
       </template>
     </b-table>
     <div>
@@ -27,16 +32,18 @@ export default {
       sortBy: "STATE",
       sortDesc: false,
       fields: [
-        { key: "ChannelID", sortable: true },
-        { key: "MediaPackageHLSEndpoint", sortable: false, label: "Player"},
-        { key: "State", sortable: true }
+        { key: "VoDID", sortable: true , label: "VOD ID"},
+        { key: "ChannelId", sortable: true, label: "ChannelId"},
+        { key: "StartTime", sortable: true, label: "Start Time"},
+        { key: "EndTime", sortable: true, label: "End Time"},
+        { key: "VoDEndpoint", sortable: false, label: "Player"}
       ],
       items: []
     };
   },
   created() {
     axios
-      .get(`${rootapi}/channel`)
+      .get(`${rootapi}/vod`)
       .then(response => {
         // JSON responses are automatically parsed.
 
@@ -63,6 +70,21 @@ export default {
     // } catch (e) {
     //   this.errors.push(e)
     // }
+  },
+  methods: {
+    timeConverter(UNIX_timestamp){
+      var a = new Date(UNIX_timestamp * 1000);
+      return a.toLocaleDateString() + ' ' + a.toLocaleTimeString()
+      // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      // var year = a.getFullYear();
+      // var month = a.getMonth()
+      // var date = a.getDate();
+      // var hour = a.getHours();
+      // var min = a.getMinutes();
+      // var sec = a.getSeconds();
+      // var time = `${date}/${month}/${year} ${hour}:${min}:${sec}`;
+      // return time;
+    }
   }
 };
 </script>
@@ -76,6 +98,9 @@ export default {
   text-align: center;
   color: #2c3e50; */
   max-width: 75rem;
-  margin: 0 auto;
+  margin: 50px auto auto auto;
+}
+h1 {
+    margin-bottom: 20px;
 }
 </style>

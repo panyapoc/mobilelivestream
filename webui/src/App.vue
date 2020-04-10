@@ -2,6 +2,7 @@
   <div id="app">
     <NavBar />
     <ChannelList />
+    <hr class="my-4">
     <VoDList />
   </div>
 </template>
@@ -10,10 +11,12 @@
 // import VoDList from './components/VoDList.vue'
 import NavBar from "./components/NavBar.vue";
 import ChannelList from "./components/ChannelList.vue";
+import VoDList from "./components/VoDList.vue";
+
 export default {
   name: "App",
   components: {
-    // VoDList,
+    VoDList,
     NavBar,
     ChannelList
   }
