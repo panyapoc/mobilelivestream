@@ -38,6 +38,6 @@ export default {
 <style scoped>
 #VideoPlayer {
     max-width: 75rem;
-    margin: 50px auto auto auto;
+    margin: auto auto auto auto;
 }
 </style>

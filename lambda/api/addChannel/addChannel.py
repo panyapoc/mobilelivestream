@@ -313,7 +313,7 @@ def lambda_handler(event, context):
     )
 
     response = {
-        'message' : 'added new Channel',
+        'message' : f'added new Channel {ChannelId}',
         'channelitem' : ChannelItem
     }
 
@@ -324,7 +324,7 @@ def lambda_handler(event, context):
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": '*'
         },
-        'body': json.dumps(ChannelItem)
+        'body': json.dumps(response)
     }
 
 

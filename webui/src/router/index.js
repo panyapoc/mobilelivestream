@@ -12,9 +12,10 @@ Vue.use(VueRouter);
     component: Home
   },
   {
-    path: '/player',
+    path: '/player/:type/:id/:url',
     name: 'Player',
-    component: Player
+    component: Player,
+    props: true
   }
 ];
 

@@ -14,19 +14,8 @@ dynamodb = boto3.resource('dynamodb')
 ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 
 def lambda_handler(event, context):
-    ddb_scan = ddb_channel.scan()
-
-    Channel = {}
-    founded = False
-
-    for Item in ddb_scan['Items'] :
-        if Item['State'] == 'IDLE' :
-            Channel = Item
-            founded = True
-            break
-
-    if founded :
-        ChannelId = Channel['ChannelId']
+    ChannelId = json.loads(event['body']).get('ChannelId',False) # ChannelId or False
+    if ChannelId :
         try:
             medialive_start_channel = medialive.start_channel(
                 ChannelId=ChannelId
@@ -40,24 +29,85 @@ def lambda_handler(event, context):
                 'body': json.dumps(response)
             }
         Channel['State'] = medialive_start_channel['State']
-        ddb_channel.put_item(Item=Channel)
+        ddb_channel.update_item(
+            Key={
+                'ChannelId': ChannelId
+            },
+            UpdateExpression='set #keyState = :State',
+            ExpressionAttributeNames={
+                '#keyState' : 'State',
+            },
+            ExpressionAttributeValues={
+                ':State': medialive_start_channel['State']
+            }
+        )
         response = {
             'message' : f'starting Channel {ChannelId}',
-            'ChannelId' : ChannelId,
-            'RTMPendpoint' : Channel['RTMPEndpoint']
+            'ChannelId' : ChannelId
+        }
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps(response)
         }
     else :
-        response = {
-            'message' : 'no idle channel please wait',
-        }
+        ddb_scan = ddb_channel.scan()
+        Channel = {}
+        founded = False
 
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': json.dumps(response)
-    }
+        for Item in ddb_scan['Items'] :
+            if Item['State'] == 'IDLE' :
+                Channel = Item
+                founded = True
+                break
+
+        if founded :
+            ChannelId = Channel['ChannelId']
+            try:
+                medialive_start_channel = medialive.start_channel(
+                    ChannelId=ChannelId
+                )
+            except:
+                response = {
+                    'message' : 'cannot start medialive channel',
+                }
+                return {
+                    'statusCode': 200,
+                    'body': json.dumps(response)
+                }
+            Channel['State'] = medialive_start_channel['State']
+            ddb_channel.update_item(
+                Key={
+                    'ChannelId': ChannelId
+                },
+                UpdateExpression='set #keyState = :State',
+                ExpressionAttributeNames={
+                    '#keyState' : 'State',
+                },
+                ExpressionAttributeValues={
+                    ':State': medialive_start_channel['State']
+                }
+            )
+            response = {
+                'message' : f'starting Channel {ChannelId}',
+                'ChannelId' : ChannelId,
+                'RTMPendpoint' : Channel['RTMPEndpoint']
+            }
+        else :
+            response = {
+                'message' : 'no idle channel please wait',
+            }
+
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps(response)
+        }
 
 

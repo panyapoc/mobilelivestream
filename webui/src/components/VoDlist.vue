@@ -10,13 +10,21 @@
       :sort-desc.sync="sortDesc"
       responsive="sm"
       borderless="borderless"
-      v-if="items.length !=0"
+      v-if="items.length != 0"
     >
-      <template v-slot:cell(VoDEndpoint)="">
-        <router-link to="/player">
-          <b-button variant="primary"><b-icon icon="play-fill"></b-icon></b-button>
-        </router-link>
-
+      <template v-slot:cell(VoDEndpoint)="data">
+        <b-button
+          :to="{
+            name: 'Player',
+            params: {
+              id: data.item.VoDID,
+              type: 'vod',
+              url: data.item.VoDEndpoint
+            }
+          }"
+          variant="primary"
+          ><b-icon icon="play-fill"></b-icon
+        ></b-button>
       </template>
       <template v-slot:cell(StartTime)="data">
         <span>{{ timeConverter(data.value) }}</span>
