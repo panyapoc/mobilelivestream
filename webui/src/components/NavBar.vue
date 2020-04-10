@@ -2,7 +2,7 @@
   <div class="NavBar">
     <div>
       <b-navbar toggleable="lg" type="dark" variant="primary">
-        <b-navbar-brand href="#">NavBar</b-navbar-brand>
+        <b-navbar-brand href="#">Mobile Live Streaming</b-navbar-brand>
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
         <b-collapse id="nav-collapse" is-nav>
           <!-- <b-navbar-nav>
@@ -11,7 +11,7 @@
           </b-navbar-nav> -->
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
-            <b-nav-item href="#" disabled>Readme</b-nav-item>
+            <b-nav-item href="#" disabled>README</b-nav-item>
             <b-nav-item target="_blank" rel="noopener noreferrer" href="https://github.com/panyapoc/mobilelivestream">GitHub</b-nav-item>
           </b-navbar-nav>
         </b-collapse>
