@@ -7,7 +7,8 @@ import axios from "axios";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
-import router from './router'
+import "video.js/dist/video-js.css";
+import router from './router';
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);

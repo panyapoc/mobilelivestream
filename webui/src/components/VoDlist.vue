@@ -12,10 +12,11 @@
       borderless="borderless"
       v-if="items.length !=0"
     >
-      <template v-slot:cell(VoDEndpoint)="data">
-        <b-button :href="data.value" variant="primary"
-          ><b-icon icon="play-fill"></b-icon
-        ></b-button>
+      <template v-slot:cell(VoDEndpoint)="">
+        <router-link to="/player">
+          <b-button variant="primary"><b-icon icon="play-fill"></b-icon></b-button>
+        </router-link>
+
       </template>
       <template v-slot:cell(StartTime)="data">
         <span>{{ timeConverter(data.value) }}</span>
@@ -54,29 +55,13 @@ export default {
     this.$http
       .get(`${rootapi}/vod`)
       .then(response => {
-        // JSON responses are automatically parsed.
-
         let channels = response.data;
-
-        // channels.forEach((channel,index) => {
-        //     channels[index]['Player']=
-        // });
-
         console.table(channels);
         this.items = channels;
       })
       .catch(e => {
         this.errors.push(e);
       });
-
-    // async / await version (created() becomes async created())
-    //
-    // try {
-    //   const response = await axios.get(`http://jsonplaceholder.typicode.com/posts`)
-    //   this.posts = response.data
-    // } catch (e) {
-    //   this.errors.push(e)
-    // }
   },
   methods: {
     timeConverter(UNIX_timestamp) {
