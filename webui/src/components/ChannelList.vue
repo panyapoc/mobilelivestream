@@ -1,13 +1,23 @@
 <template>
   <div id="ChannelList">
-    <h1>Live Channel</h1>
+    <b-row>
+      <b-col class="text-left"><h1>Live Channel</h1></b-col>
+      <b-col class="text-right">
+        <b-button variant="success" @click="newChannel()">New Channel <b-icon icon="play-fill"></b-icon></b-button>
+      </b-col>
+    </b-row>
+
     <b-table
       :items="items"
       :fields="fields"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       responsive="sm"
+      borderless="borderless"
+      v-if="items.length !=0"
     >
+
+
       <template v-slot:cell(StartChannel)="data">
         <b-button-group>
           <b-button :disabled="data.item.State == STREAMRUNNING" variant="success" @click="startChannel(data.index)">Start <b-icon icon="play-fill"></b-icon></b-button>
@@ -50,15 +60,14 @@
         </div>
       </template>
     </b-table>
-    <div>
-      <!-- Sorting By: <b>{{ sortBy }}</b>, Sort Direction: -->
-      <!-- <b>{{ sortDesc ? 'Descending' : 'Ascending' }}</b> -->
+
+    <div v-else>
+      No Channel avalible, please create new Channel.
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 
 const rootapi = process.env.VUE_APP_AWS_APIGATEWAY_ENDPOINT;
 
@@ -81,7 +90,7 @@ export default {
     };
   },
   created() {
-    axios
+    this.$http
       .get(`${rootapi}/channel`)
       .then(response => {
         // JSON responses are automatically parsed.
@@ -117,32 +126,47 @@ export default {
       return comp[3]
     },
     startChannel: function (index){
-      this.items[index]['State'] = 'STARTTING'
-      axios.post(`${rootapi}/channel/startChannel`)
+      let self = this;
+      this.items[index]['State'] = 'STARTING'
+      this.$http.post(`${rootapi}/channel/startChannel`)
       .then(function (response) {
         console.log(response);
-        this.$emit('showAlert','response','success');
+        self.$emit('showAlert',response.data.message,'success');
 
       })
       .catch(function (error) {
         console.log(error);
-        this.$emit('showAlert','Error','danger');
+        self.$emit('showAlert','Error','danger');
       });
     },
     stopChannel: function (ChannelId,index){
+      let self = this;
       this.items[index]['State'] = 'STOPPING'
       console.log(ChannelId)
-      axios.post(`${rootapi}/channel/stopChannel`,{
+      this.$http.post(`${rootapi}/channel/stopChannel`,{
         'ChannelId' : ChannelId
       })
       .then(function (response) {
         console.log(response);
-        this.$emit('showAlert','response','success');
+        self.$emit('showAlert','response','success');
 
       })
       .catch(function (error) {
         console.log(error);
-        this.$emit('showAlert','Error','danger');
+        self.$emit('showAlert','Error','danger');
+      });
+    },
+    newChannel: function (){
+      let self = this;
+      this.$http.post(`${rootapi}/channel/addChannel`)
+      .then(function (response) {
+        console.log(response);
+        self.$emit('showAlert',response.message,'success');
+
+      })
+      .catch(function (error) {
+        console.log(error);
+        self.$emit('showAlert',error.message,'danger');
       });
     }
   }

@@ -1,9 +1,21 @@
 <template>
   <div id="ChannelList">
-    <h1>Video Ondemand</h1>
-    <b-table :items="items" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" responsive="sm">
+    <b-row>
+      <b-col align-v="start" class="text-left"><h1>Video On-Demand</h1></b-col>
+    </b-row>
+    <b-table
+      :items="items"
+      :fields="fields"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      responsive="sm"
+      borderless="borderless"
+      v-if="items.length !=0"
+    >
       <template v-slot:cell(VoDEndpoint)="data">
-        <b-button :href="data.value" variant="success">Play <b-icon icon="play-fill"></b-icon></b-button>
+        <b-button :href="data.value" variant="success"
+          >Play <b-icon icon="play-fill"></b-icon
+        ></b-button>
       </template>
       <template v-slot:cell(StartTime)="data">
         <span>{{ timeConverter(data.value) }}</span>
@@ -12,19 +24,16 @@
         <span>{{ timeConverter(data.value) }}</span>
       </template>
     </b-table>
-    <div>
-      <!-- Sorting By: <b>{{ sortBy }}</b>, Sort Direction: -->
-      <!-- <b>{{ sortDesc ? 'Descending' : 'Ascending' }}</b> -->
+    <div v-else>
+      No VOD avalible, please finish Streamming first.
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
+const rootapi = process.env.VUE_APP_AWS_APIGATEWAY_ENDPOINT;
 
-const rootapi = process.env.VUE_APP_AWS_APIGATEWAY_ENDPOINT
-
-console.log(rootapi)
+console.log(rootapi);
 
 export default {
   data() {
@@ -32,30 +41,28 @@ export default {
       sortBy: "STATE",
       sortDesc: false,
       fields: [
-        { key: "VoDID", sortable: true , label: "VOD ID"},
-        { key: "ChannelId", sortable: true, label: "ChannelId"},
-        { key: "StartTime", sortable: true, label: "Start Time"},
-        { key: "EndTime", sortable: true, label: "End Time"},
-        { key: "VoDEndpoint", sortable: false, label: "Player"}
+        { key: "VoDID", sortable: true, label: "VOD ID" },
+        { key: "ChannelId", sortable: true, label: "ChannelId" },
+        { key: "StartTime", sortable: true, label: "Start Time" },
+        { key: "EndTime", sortable: true, label: "End Time" },
+        { key: "VoDEndpoint", sortable: false, label: "Player" }
       ],
       items: []
     };
   },
   created() {
-    axios
+    this.$http
       .get(`${rootapi}/vod`)
       .then(response => {
         // JSON responses are automatically parsed.
 
-
-        let channels = response.data
-
+        let channels = response.data;
 
         // channels.forEach((channel,index) => {
         //     channels[index]['Player']=
         // });
 
-        console.table(channels)
+        console.table(channels);
         this.items = channels;
       })
       .catch(e => {
@@ -72,12 +79,11 @@ export default {
     // }
   },
   methods: {
-    timeConverter(UNIX_timestamp){
-      if(!UNIX_timestamp)
-        return "Stream Still RUNNING"
-      else{
+    timeConverter(UNIX_timestamp) {
+      if (!UNIX_timestamp) return "Stream Still RUNNING";
+      else {
         var a = new Date(UNIX_timestamp * 1000);
-        return a.toLocaleDateString() + ' ' + a.toLocaleTimeString()
+        return a.toLocaleDateString() + " " + a.toLocaleTimeString();
       }
 
       // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -106,6 +112,6 @@ export default {
   margin: 50px auto auto auto;
 }
 h1 {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 </style>
