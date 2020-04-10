@@ -3,7 +3,7 @@
     <b-row>
       <b-col class="text-left"><h1>Live Channel</h1></b-col>
       <b-col class="text-right">
-        <b-button variant="success" @click="newChannel()">New Channel <b-icon icon="play-fill"></b-icon></b-button>
+        <b-button variant="primary" @click="newChannel()">New Channel <b-icon icon="file-plus"></b-icon></b-button>
       </b-col>
     </b-row>
 
@@ -20,8 +20,8 @@
 
       <template v-slot:cell(StartChannel)="data">
         <b-button-group>
-          <b-button :disabled="data.item.State == STREAMRUNNING" variant="success" @click="startChannel(data.index)">Start <b-icon icon="play-fill"></b-icon></b-button>
-          <b-button :disabled="data.item.State != STREAMRUNNING" variant="danger" @click="stopChannel(data.item.ChannelId,data.index)">Stop <b-icon icon="play-fill"></b-icon></b-button>
+          <b-button :disabled="data.item.State != IDLE" variant="primary" @click="startChannel(data.index)"><b-icon icon="camera-video-fill"></b-icon></b-button>
+          <b-button :disabled="data.item.State != RUNNING" variant="secondary" @click="stopChannel(data.item.ChannelId,data.index)"><b-icon icon="stop-fill"></b-icon></b-button>
         </b-button-group>
       </template>
       <template v-slot:cell(RTMPEndpoint)="data">
@@ -33,7 +33,8 @@
             v-clipboard:copy="data.value"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError"
-          > Full <b-icon icon="file-earmark" aria-hidden="true"></b-icon>
+          > FULL
+          <!-- <b-icon icon="file-earmark" aria-hidden="true"></b-icon> -->
           </b-button>
                     <b-button
             v-b-tooltip.hover
@@ -41,7 +42,8 @@
             v-clipboard:copy="getRTMPEndpoint(data.value)"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError"
-          > RTMP <b-icon icon="file-earmark" aria-hidden="true"></b-icon>
+          > RTMP
+          <!-- <b-icon icon="file-earmark" aria-hidden="true"></b-icon> -->
           </b-button>
                     <b-button
             v-b-tooltip.hover
@@ -49,14 +51,14 @@
             v-clipboard:copy="getStreamKey(data.value)"
             v-clipboard:success="onCopy"
             v-clipboard:error="onError"
-          > Stream key <b-icon icon="file-earmark" aria-hidden="true"></b-icon>
+          > STREAM KEY <b-icon icon="file-earmark" aria-hidden="true"></b-icon>
           </b-button>
           </b-button-group>
         </div>
       </template>
         <template v-slot:cell(MediaPackageHLSEndpoint)="data">
         <div>
-          <b-button :disabled="data.item.State != STREAMRUNNING" :href="data.value" variant="success">Play <b-icon icon="play-fill"></b-icon></b-button>
+          <b-button :disabled="data.item.State != STREAMRUNNING" :href="data.value" variant="primary"><b-icon icon="play-fill"></b-icon></b-button>
         </div>
       </template>
     </b-table>
@@ -76,14 +78,15 @@ console.log(rootapi);
 export default {
   data() {
     return {
-      STREAMRUNNING : "RUNNING",
+      IDLE : "IDLE",
+      RUNNING : "RUNNING",
       sortBy: "STATE",
       sortDesc: false,
       fields: [
         { key: "ChannelId", sortable: true },
         { key: "State", sortable: true },
         { key: "StartChannel", sortable: false, label: "START/STOP" },
-        { key: "RTMPEndpoint", sortable: false, label: "RTMP" },
+        { key: "RTMPEndpoint", sortable: false, label: "RTMP ENDPOINT" },
         { key: "MediaPackageHLSEndpoint", sortable: false, label: "Player" },
       ],
       items: []
@@ -130,13 +133,13 @@ export default {
       this.items[index]['State'] = 'STARTING'
       this.$http.post(`${rootapi}/channel/startChannel`)
       .then(function (response) {
-        console.log(response);
+        console.log("startChannel" ,response);
         self.$emit('showAlert',response.data.message,'success');
 
       })
       .catch(function (error) {
         console.log(error);
-        self.$emit('showAlert','Error','danger');
+        self.$emit('showAlert',error,'danger');
       });
     },
     stopChannel: function (ChannelId,index){
@@ -147,21 +150,21 @@ export default {
         'ChannelId' : ChannelId
       })
       .then(function (response) {
-        console.log(response);
-        self.$emit('showAlert','response','success');
+        console.log("stopChannel" ,response);
+        self.$emit('showAlert',response.data.message,'success');
 
       })
       .catch(function (error) {
         console.log(error);
-        self.$emit('showAlert','Error','danger');
+        self.$emit('showAlert',error,'danger');
       });
     },
     newChannel: function (){
       let self = this;
       this.$http.post(`${rootapi}/channel/addChannel`)
       .then(function (response) {
-        console.log(response);
-        self.$emit('showAlert',response.message,'success');
+        console.log("addChannel" ,response);
+        self.$emit('showAlert',response.data.message,'success');
 
       })
       .catch(function (error) {

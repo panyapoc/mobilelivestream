@@ -13,8 +13,8 @@
       v-if="items.length !=0"
     >
       <template v-slot:cell(VoDEndpoint)="data">
-        <b-button :href="data.value" variant="success"
-          >Play <b-icon icon="play-fill"></b-icon
+        <b-button :href="data.value" variant="primary"
+          ><b-icon icon="play-fill"></b-icon
         ></b-button>
       </template>
       <template v-slot:cell(StartTime)="data">
