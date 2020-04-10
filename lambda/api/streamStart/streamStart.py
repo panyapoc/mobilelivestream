@@ -9,7 +9,7 @@ import os
 
 # BOTO3
 medialive = boto3.client('medialive')
-dynamodb = boto3.resource("dynamodb")
+dynamodb = boto3.resource('dynamodb')
 
 ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 
@@ -53,6 +53,10 @@ def lambda_handler(event, context):
 
     return {
         'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
         'body': json.dumps(response)
     }
 
