@@ -12,7 +12,12 @@
           <!-- Right aligned nav items -->
           <b-navbar-nav class="ml-auto">
             <b-nav-item href="#" disabled>README</b-nav-item>
-            <b-nav-item target="_blank" rel="noopener noreferrer" href="https://github.com/panyapoc/mobilelivestream">GitHub</b-nav-item>
+            <b-nav-item
+              target="_blank"
+              rel="noopener noreferrer"
+              href="https://github.com/panyapoc/mobilelivestream"
+              >GitHub</b-nav-item
+            >
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
@@ -21,14 +26,13 @@
 </template>
 
 <script>
-  export default {
-    name: 'NavBar',
-    // props: {
-    //   msg: String
-    // }
-  }
+export default {
+  name: "NavBar"
+  // props: {
+  //   msg: String
+  // }
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-</style>
+<style scoped></style>
