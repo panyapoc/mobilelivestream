@@ -8,6 +8,7 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
+Vue.use(VueClipboard);
 
 Vue.config.productionTip = false;
 

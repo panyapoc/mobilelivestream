@@ -3,7 +3,7 @@
     <h1>Video Ondemand</h1>
     <b-table :items="items" :fields="fields" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" responsive="sm">
       <template v-slot:cell(VoDEndpoint)="data">
-        <b-button :href="data.value" variant="success">Play</b-button>
+        <b-button :href="data.value" variant="success">Play <b-icon icon="play-fill"></b-icon></b-button>
       </template>
       <template v-slot:cell(StartTime)="data">
         <span>{{ timeConverter(data.value) }}</span>
@@ -73,8 +73,13 @@ export default {
   },
   methods: {
     timeConverter(UNIX_timestamp){
-      var a = new Date(UNIX_timestamp * 1000);
-      return a.toLocaleDateString() + ' ' + a.toLocaleTimeString()
+      if(!UNIX_timestamp)
+        return "Stream Still RUNNING"
+      else{
+        var a = new Date(UNIX_timestamp * 1000);
+        return a.toLocaleDateString() + ' ' + a.toLocaleTimeString()
+      }
+
       // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       // var year = a.getFullYear();
       // var month = a.getMonth()
