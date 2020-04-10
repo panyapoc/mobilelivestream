@@ -1,4 +1,4 @@
-# API - ChannelID
+# API - ChannelId
 # 1. stop Channel
 # 2. return ACK
 
@@ -13,22 +13,22 @@ dynamodb = boto3.resource("dynamodb")
 ddb_channel = dynamodb.Table(os.environ['ddb_channel'])
 
 def lambda_handler(event, context):
-    ChannelID = json.loads(event['body']).get('ChannelID',False) # ChannelID or False
-    if ChannelID:
+    ChannelId = json.loads(event['body']).get('ChannelId',False) # ChannelId or False
+    if ChannelId:
         try:
             medialive_stop_channel = medialive.stop_channel(
-                ChannelId=ChannelID
+                ChannelId=ChannelId
             )
         except:
             response = {
-                'message' : f'cannot stop medialive channel {ChannelID}'
+                'message' : f'cannot stop medialive channel {ChannelId}'
             }
 
         print(medialive_stop_channel['State'])
 
         ddb_channel.update_item(
             Key={
-                'ChannelID': ChannelID
+                'ChannelId': ChannelId
             },
             UpdateExpression='set #keyState = :State',
             ExpressionAttributeNames={
@@ -39,7 +39,7 @@ def lambda_handler(event, context):
             }
         )
         response = {
-            'message' : f'stopping channel {ChannelID}',
+            'message' : f'stopping channel {ChannelId}',
         }
         return {
             'statusCode': 200,
@@ -51,7 +51,7 @@ def lambda_handler(event, context):
         }
     else :
         response = {
-                'message' : 'cannot stop channel - no ChannelID',
+                'message' : 'cannot stop channel - no ChannelId',
             }
         return {
             'statusCode': 200,

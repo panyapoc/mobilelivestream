@@ -183,10 +183,10 @@ Resources:
     Properties:
       TableName: !Sub '${ProjectName}-Channel'
       AttributeDefinitions:
-        - AttributeName: ChannelID
+        - AttributeName: ChannelId
           AttributeType: S
       KeySchema:
-        - AttributeName: ChannelID
+        - AttributeName: ChannelId
           KeyType: HASH
       BillingMode: PAY_PER_REQUEST
   TableVoD:

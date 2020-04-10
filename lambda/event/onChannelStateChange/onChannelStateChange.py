@@ -34,14 +34,14 @@ def lambda_handler(event, context):
     # 2. Update VoD table
     # 3. Notify Mobile Channel Ready
     if event['detail']['state'] == 'RUNNING' :
-        ChannelID = getChannelID(event['detail']['channel_arn'])
-        print(f'updating channel {ChannelID} State to RUNNING')
+        ChannelId = getChannelId(event['detail']['channel_arn'])
+        print(f'updating channel {ChannelId} State to RUNNING')
 
         VoDID = str(uuid.uuid4())
 
         ddb_channel.update_item(
             Key={
-                'ChannelID': ChannelID
+                'ChannelId': ChannelId
             },
             UpdateExpression='set #keyState = :State, VoDID = :VoDID',
             ExpressionAttributeNames={
@@ -58,7 +58,7 @@ def lambda_handler(event, context):
 
         VoD = {
             'VoDID' : VoDID,
-            'ChannelId' : ChannelID,
+            'ChannelId' : ChannelId,
             'StartTime' : str(timestamp),
             'EndTime' : None,
             'VoDEndpoint' : None,
@@ -67,11 +67,11 @@ def lambda_handler(event, context):
         ddb_vod.put_item(Item=VoD)
 
         Channel = ddb_channel.get_item(
-            Key={ 'ChannelID': ChannelID }
+            Key={ 'ChannelId': ChannelId }
         )
         ChannelRTMPEndpoint = Channel['Item']['RTMPEndpoint']
         Message = {
-            'Message' : f'Channel {ChannelID} is ready',
+            'Message' : f'Channel {ChannelId} is ready',
             'RTMPEndpoint' : ChannelRTMPEndpoint
         }
         print(Message)
@@ -90,10 +90,10 @@ def lambda_handler(event, context):
     # 4. Update VoD table
     # 5. Update Channel State on DDB ✅
     elif event['detail']['state'] == 'STOPPED' :
-        ChannelID = getChannelID(event['detail']['channel_arn'])
+        ChannelId = getChannelId(event['detail']['channel_arn'])
 
         Channel = ddb_channel.get_item(
-            Key={ 'ChannelID': ChannelID }
+            Key={ 'ChannelId': ChannelId }
         )
 
         # 1. Start moving archive file to new location
@@ -134,10 +134,10 @@ def lambda_handler(event, context):
         )
 
         # 5. Update Channel State on DDB ✅
-        print(f'updating channel {ChannelID} State to STOPPED')
+        print(f'updating channel {ChannelId} State to STOPPED')
         ddb_channel.update_item(
             Key={
-                'ChannelID': ChannelID
+                'ChannelId': ChannelId
             },
             UpdateExpression='set #keyState = :State, VoDID = :VoDID',
             ExpressionAttributeNames={
@@ -154,7 +154,7 @@ def lambda_handler(event, context):
 
     return 'ok'
 
-def getChannelID (ChannelARN) :
+def getChannelId (ChannelARN) :
     return ChannelARN.rsplit(':',1)[1]
 
 

@@ -300,7 +300,7 @@ def lambda_handler(event, context):
     #TODO ERROR handling / Retry
 
     ChannelItem = {
-        'ChannelID' : ChannelId,
+        'ChannelId' : ChannelId,
         'Streamer' : None,
         'State' : 'IDLE',
         'RTMPEndpoint' : input_endpoint,

@@ -26,10 +26,10 @@ def lambda_handler(event, context):
             break
 
     if founded :
-        ChannelID = Channel['ChannelID']
+        ChannelId = Channel['ChannelId']
         try:
             medialive_start_channel = medialive.start_channel(
-                ChannelId=ChannelID
+                ChannelId=ChannelId
             )
         except:
             response = {
@@ -42,8 +42,8 @@ def lambda_handler(event, context):
         Channel['State'] = medialive_start_channel['State']
         ddb_channel.put_item(Item=Channel)
         response = {
-            'message' : f'starting Channel {ChannelID}',
-            'ChannelID' : ChannelID,
+            'message' : f'starting Channel {ChannelId}',
+            'ChannelId' : ChannelId,
             'RTMPendpoint' : Channel['RTMPEndpoint']
         }
     else :

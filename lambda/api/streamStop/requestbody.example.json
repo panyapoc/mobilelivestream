@@ -1,5 +1,5 @@
 {
-    "body": "{\"ChannelID\":\"6143654\"}",
+    "body": "{\"ChannelId\":\"6143654\"}",
     "resource": "/{proxy+}",
     "path": "/path/to/resource",
     "httpMethod": "POST",

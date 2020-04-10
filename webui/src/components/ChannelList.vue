@@ -9,9 +9,10 @@
       responsive="sm"
     >
       <template v-slot:cell(StartChannel)="data">
-        <div>
-          <b-button :disabled="data.item.State == STREAMRUNNING" variant="success" @click="startChannel()">Start <b-icon icon="play-fill"></b-icon></b-button>
-        </div>
+        <b-button-group>
+          <b-button :disabled="data.item.State == STREAMRUNNING" variant="success" @click="startChannel(data.index)">Start <b-icon icon="play-fill"></b-icon></b-button>
+          <b-button :disabled="data.item.State != STREAMRUNNING" variant="danger" @click="stopChannel(data.item.ChannelId,data.index)">Stop <b-icon icon="play-fill"></b-icon></b-button>
+        </b-button-group>
       </template>
       <template v-slot:cell(RTMPEndpoint)="data">
         <div>
@@ -70,9 +71,9 @@ export default {
       sortBy: "STATE",
       sortDesc: false,
       fields: [
-        { key: "ChannelID", sortable: true },
+        { key: "ChannelId", sortable: true },
         { key: "State", sortable: true },
-        { key: "StartChannel", sortable: false, label: "Start Channel" },
+        { key: "StartChannel", sortable: false, label: "START/STOP" },
         { key: "RTMPEndpoint", sortable: false, label: "RTMP" },
         { key: "MediaPackageHLSEndpoint", sortable: false, label: "Player" },
       ],
@@ -115,11 +116,29 @@ export default {
       let comp = RTMPEndpoint.split('/');
       return comp[3]
     },
-    startChannel: function (){
+    startChannel: function (index){
+      this.items[index]['State'] = 'STARTTING'
       axios.post(`${rootapi}/channel/startChannel`)
       .then(function (response) {
         console.log(response);
         this.$emit('showAlert','response','success');
+
+      })
+      .catch(function (error) {
+        console.log(error);
+        this.$emit('showAlert','Error','danger');
+      });
+    },
+    stopChannel: function (ChannelId,index){
+      this.items[index]['State'] = 'STOPPING'
+      console.log(ChannelId)
+      axios.post(`${rootapi}/channel/stopChannel`,{
+        'ChannelId' : ChannelId
+      })
+      .then(function (response) {
+        console.log(response);
+        this.$emit('showAlert','response','success');
+
       })
       .catch(function (error) {
         console.log(error);
