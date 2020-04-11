@@ -29,7 +29,7 @@ def lambda_handler(event, context):
 
     # 1. Create new Medialive Input
     medialive_create_input = medialive.create_input(
-        Destinations=[{'StreamName': f'input{channeluuid}'},],
+        Destinations=[{'StreamName': f'liveinput/{channeluuid}'},],
         InputSecurityGroups=[ medialive_sg ],
         Name=f'input{channeluuid}',
         Type='RTMP_PUSH'
