@@ -20,6 +20,8 @@ import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -60,10 +62,13 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     private SrsPublisher mPublisher;
     private SrsCameraView mCameraView;
 
-    private String channelId;
+    private String ChannelId;
+    private String message;
 
     private int mWidth = 640;
     private int mHeight = 480;
+
+    private EditText efu;
 
     OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -72,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
@@ -84,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         rtmpUrl = sp.getString("rtmpUrl", rtmpUrl);
 
         // initialize url.
-        final EditText efu = (EditText) findViewById(R.id.url);
+        efu = (EditText) findViewById(R.id.url);
         efu.setText(rtmpUrl);
 
         btnPublish = (Button) findViewById(R.id.publish);
@@ -121,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
                 if (btnPublish.getText().toString().contentEquals("publish")) {
                     rtmpUrl = efu.getText().toString();
                     SharedPreferences.Editor editor = sp.edit();
+                    setTitle("CH "+ChannelId);
                     editor.putString("rtmpUrl", rtmpUrl);
                     editor.apply();
 
@@ -147,17 +154,24 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
             @Override
             public void onClick(View view) {
                 if(btnStartStopCH.getText().toString().equals("STARTCH")){
-                    String url= ROOTAPI+"/channel/startChannel";
                     String postBody="{}";
                     try {
-                        startChannel(url,postBody);
+                        startChannel(postBody);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-//                    mPublisher.pausePublish();
+
                     btnStartStopCH.setText("STOPCH");
                 }else{
-//                    API stopChannel
+                    String postBody="{\n" +
+                            "    \"ChannelId\": \""+ChannelId+"\"\n" +
+                            "}";
+                    try {
+                        stopChannel(postBody);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     btnStartStopCH.setText("STARTCH");
                 }
             }
@@ -201,12 +215,13 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         });
     }
 
-    void startChannel(String postUrl,String postBody) throws IOException {
+    void startChannel(String postBody) throws IOException {
+        String url= ROOTAPI+"/channel/startChannel";
         OkHttpClient client = new OkHttpClient();
         RequestBody body = RequestBody.create(JSON, postBody);
 
         Request request = new Request.Builder()
-                .url(postUrl)
+                .url(url)
                 .post(body)
                 .build();
 
@@ -222,15 +237,58 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
                 try {
                     obj = new JSONObject(jsonString);
                     rtmpUrl = obj.getString("RTMPEndpoint");
-                    channelId = obj.getString("ChannelId");
+                    ChannelId = obj.getString("ChannelId");
+                    message = obj.getString("message");
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-//                Toast.makeText(getApplicationContext(), rtmpUrl, Toast.LENGTH_SHORT).show();
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("rtmpUrl", rtmpUrl);
-                editor.apply();
+
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        efu.setText(rtmpUrl);
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    void stopChannel(String postBody) throws IOException {
+        String url= ROOTAPI+"/channel/stopChannel";
+        Log.d("TAG",postBody);
+        Log.d("TAG",url);
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(JSON, postBody);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            public void onFailure(Call call, IOException e) {
+                call.cancel();
+            }
+
+            public void onResponse(Call call, Response response) throws IOException {
+                String jsonString = response.body().string();
+                Log.d("TAG",jsonString);
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject(jsonString);
+                    message = obj.getString("message");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
