@@ -151,12 +151,12 @@ export default {
     getRTMPEndpoint: function(RTMPEndpoint) {
       // eslint-disable-next-line no-unused-vars
       let comp = RTMPEndpoint.split("/");
-      return `${comp[0]}//${comp[2]}`;
+      return `${comp[0]}//${comp[2]}/${comp[3]}`;
     },
     getStreamKey: function(RTMPEndpoint) {
       // eslint-disable-next-line no-unused-vars
       let comp = RTMPEndpoint.split("/");
-      return comp[3];
+      return comp[comp.length-1];
     },
     startChannel: function(index,ChannelId) {
       let self = this;

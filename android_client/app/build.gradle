@@ -25,5 +25,6 @@ dependencies {
     implementation fileTree(dir: 'libx264.libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
     implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
     implementation project(path: ':library')
 }

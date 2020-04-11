@@ -1,7 +1,12 @@
 package net.ossrs.yasea.demo;
 
+import java.io.IOException;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -37,14 +42,16 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
     private Button btnSwitchCamera;
     private Button btnRecord;
     private Button btnSwitchEncoder;
-    private Button btnPause;
+    private Button btnStartStopCH;
 
     private SharedPreferences sp;
-    private String rtmpUrl = "rtmp://ossrs.net/" + getRandomAlphaString(3) + '/' + getRandomAlphaDigitString(5);
+    private String rtmpUrl = "rtmp://18.141.124.99:1935/input6477a610-7b4c-11ea-80b6-d79501f7bc95";
     private String recPath = Environment.getExternalStorageDirectory().getPath() + "/test.mp4";
 
     private SrsPublisher mPublisher;
     private SrsCameraView mCameraView;
+
+    private String channelID;
 
     private int mWidth = 640;
     private int mHeight = 480;
@@ -71,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         btnSwitchCamera = (Button) findViewById(R.id.swCam);
         btnRecord = (Button) findViewById(R.id.record);
         btnSwitchEncoder = (Button) findViewById(R.id.swEnc);
-        btnPause = (Button) findViewById(R.id.pause);
-        btnPause.setEnabled(false);
+        btnStartStopCH = (Button) findViewById(R.id.startStopCH);
         mCameraView = (SrsCameraView) findViewById(R.id.glsurfaceview_camera);
         mCameraView.setCameraId(Camera.CameraInfo.CAMERA_FACING_BACK); // 0是后置摄像头，1是前置摄像头
       
@@ -84,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
         mPublisher.setOutputResolution(mHeight, mWidth); // 这里要和preview反过来
         mPublisher.setVideoHDMode();
         mPublisher.startCamera();
+
+
       
         mCameraView.setCameraCallbacksHandler(new SrsCameraView.CameraCallbacksHandler(){
             @Override
@@ -113,26 +121,27 @@ public class MainActivity extends AppCompatActivity implements RtmpHandler.RtmpL
                     }
                     btnPublish.setText("stop");
                     btnSwitchEncoder.setEnabled(false);
-                    btnPause.setEnabled(true);
                 } else if (btnPublish.getText().toString().contentEquals("stop")) {
                     mPublisher.stopPublish();
                     mPublisher.stopRecord();
                     btnPublish.setText("publish");
                     btnRecord.setText("record");
                     btnSwitchEncoder.setEnabled(true);
-                    btnPause.setEnabled(false);
                 }
             }
         });
-        btnPause.setOnClickListener(new View.OnClickListener() {
+        btnStartStopCH.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(btnPause.getText().toString().equals("Pause")){
-                    mPublisher.pausePublish();
-                    btnPause.setText("resume");
+                if(btnStartStopCH.getText().toString().equals("STARTCH")){
+
+//                    API startChannel
+//                    update rtmpUrl
+//                    mPublisher.pausePublish();
+                    btnStartStopCH.setText("STOPCH");
                 }else{
-                    mPublisher.resumePublish();
-                    btnPause.setText("Pause");
+//                    API stopChannel
+                    btnStartStopCH.setText("STARTCH");
                 }
             }
         });
