@@ -92,7 +92,7 @@ def lambda_handler(event, context):
             response = {
                 'message' : f'starting Channel {ChannelId}',
                 'ChannelId' : ChannelId,
-                'RTMPendpoint' : Channel['RTMPEndpoint']
+                'RTMPEndpoint' : Channel['RTMPEndpoint']
             }
         else :
             response = {
