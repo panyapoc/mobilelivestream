@@ -133,3 +133,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 lambda/event/.DS_Store
+.idea/
