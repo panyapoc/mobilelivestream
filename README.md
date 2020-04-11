@@ -6,7 +6,11 @@ Mobile Live Streaming Solution on AWS
 
 - [Twitch Encoding recommendation](https://stream.twitch.tv/encoding/)
 - [YT Encoding recommendation](https://support.google.com/youtube/answer/2853702?hl=en)
--
+
+## Android Client
+
+base on [**Yasea**](https://github.com/begeekmyfriend/yasea) Android streaming client
+
 ## Deploy
 
 Howto acc
