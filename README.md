@@ -45,9 +45,11 @@ sam deploy \
     --capabilities CAPABILITY_NAMED_IAM
 ```
 
-## DynamoDB Table
+## MISC
 
-### DDB Channel Table
+### DynamoDB Table
+
+#### DDB Channel Table
 
 - ChannelId
 - Streamer : [Future USE] who currenty Streaming
@@ -58,7 +60,7 @@ sam deploy \
 
 logging of livestream is p much VOD table
 
-### DDB VoD Table
+#### DDB VoD Table
 
 - VoDID
 - ChannelId : Create From which chaneel
@@ -67,7 +69,7 @@ logging of livestream is p much VOD table
 - VoDEndpoint : HLS Endpoint to view VoD
 - Streamer : [Future USE] who streamed this VoD
 
-Timestamp Usage
+### Timestamp Usage
 
 ``` Python
 from datetime import datetime
