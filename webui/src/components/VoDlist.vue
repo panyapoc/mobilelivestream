@@ -27,7 +27,7 @@
               url: data.item.VoDEndpoint
             }
           }"
-          variant="primary"
+          variant="secondary"
           ><b-icon icon="play-fill"></b-icon
         ></b-button>
       </template>

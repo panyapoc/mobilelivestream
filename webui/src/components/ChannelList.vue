@@ -27,15 +27,15 @@
         <b-button-group>
           <b-button
             :disabled="data.item.State != IDLE"
-            variant="primary"
+            variant="dark"
             @click="startChannel(data.index,data.item.ChannelId)"
-            ><b-icon icon="camera-video-fill"></b-icon
+            ><b-icon icon="camera-video"></b-icon
           ></b-button>
           <b-button
             :disabled="data.item.State != RUNNING"
-            variant="secondary"
+            variant="dark"
             @click="stopChannel(data.item.ChannelId, data.index)"
-            ><b-icon icon="stop-fill"></b-icon
+            ><b-icon icon="stop"></b-icon
           ></b-button>
         </b-button-group>
       </template>
@@ -87,7 +87,7 @@
               }
             }"
             :disabled="data.item.State != RUNNING"
-            variant="primary"
+            variant="secondary"
             ><b-icon icon="play-fill"></b-icon
           ></b-button>
         </div>
