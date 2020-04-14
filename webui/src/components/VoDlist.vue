@@ -3,10 +3,10 @@
     <b-row>
       <b-col align-v="start" class="text-left"><h1>Video On-Demand</h1></b-col>
       <b-col class="text-right">
-      <b-button variant="primary" @click="refreshVOD()"
+        <b-button variant="primary" @click="refreshVOD()"
           ><b-icon icon="arrow-clockwise"></b-icon
         ></b-button>
-        </b-col>
+      </b-col>
     </b-row>
     <b-table
       :items="items"
@@ -82,7 +82,7 @@ export default {
       else {
         var a = new Date(UNIX_timestamp * 1000);
         return a.toLocaleDateString() + " " + a.toLocaleTimeString();
-    }
+      }
       // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
       // var year = a.getFullYear();
       // var month = a.getMonth()
@@ -107,6 +107,8 @@ export default {
     }
   }
 };
+
+//filename wutface
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -124,3 +126,4 @@ h1 {
   margin-bottom: 20px;
 }
 </style>
+
